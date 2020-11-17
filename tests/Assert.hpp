@@ -1,10 +1,10 @@
 #pragma once
 #include <cstdio>
 
-#define Assert(e) ((e) ? ()0 : axl::Assert::_assertionFailed(false, #e, __FILE__, __LINE__))
-#define Asserte(e) ((e) ? ()0 : axl::Assert::_assertionFailed(true, #e, __FILE__, __LINE__))
-#define Assertv(e, verbose) ((e) ? (verbose ? axl::Assert::_assertionSucceeded(#e) : ()0) : axl::Assert::_assertionFailed(false, #e, __FILE__, __LINE__))
-#define Assertve(e, verbose) ((e) ? (verbose ? axl::Assert::_assertionSucceeded(#e) : ()0) : axl::Assert::_assertionFailed(true, #e, __FILE__, __LINE__))
+#define Assertf(e) ((e) ? (void)0 : axl::Assert::_assertionFailed(false, #e, __FILE__, __LINE__))
+#define Assertfe(e) ((e) ? (void)0 : axl::Assert::_assertionFailed(true, #e, __FILE__, __LINE__))
+#define Assertv(e, verbose) ((e) ? (verbose ? axl::Assert::_assertionSucceeded(#e) : (void)0) : axl::Assert::_assertionFailed(false, #e, __FILE__, __LINE__))
+#define Assertve(e, verbose) ((e) ? (verbose ? axl::Assert::_assertionSucceeded(#e) : (void)0) : axl::Assert::_assertionFailed(true, #e, __FILE__, __LINE__))
 
 namespace axl {
 namespace Assert {

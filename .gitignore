@@ -3,3 +3,6 @@ build
 Release
 Debug
 Resources
+*.dll
+*.a
+*.obj
