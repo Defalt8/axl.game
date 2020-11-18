@@ -1,7 +1,7 @@
-#include <axl.gl/Application.hpp>
-#include <axl.gl/KeyMap.hpp>
 #define WIN32_LEAN_AND_MEAN 1
 #include <windows.h>
+#include <axl.gl/Application.hpp>
+#include <axl.gl/KeyMap.hpp>
 
 namespace axl {
 namespace gl {
