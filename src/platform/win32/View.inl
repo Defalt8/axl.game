@@ -1,6 +1,5 @@
 #include <cstdlib>
-#define WIN32_LEAN_AND_MEAN 1
-#include <windows.h>
+#include "defs.h"
 #include <axl.glw/wglext.hpp>
 #include <axl.gl/View.hpp>
 #include <axl.gl/KeyMap.hpp>
@@ -49,7 +48,7 @@ View::View(const axl::utils::WString& title_, const axl::math::Vec2<int>& positi
 	setCursor(m_cursor);
 	if(m_reserved)
 	{
-		((ViewData*)m_reserved)->hinst = GetModuleHandle(0);
+		((ViewData*)m_reserved)->hinst = GetModuleHandleW(0);
 	}
 }
 
@@ -103,10 +102,10 @@ bool View::create(bool recreate, const Config* configs_, int configs_count_)
 				DestroyWindow(((ViewData*)m_reserved)->hwnd);
 			}
 		}
-		axl::utils::WString class_name(L"AXL.GLW VIEW");
-		class_name += m_title.substring(12) + L" GAME";
+		axl::utils::WString class_name(L"AXL.GLW.VIEW.");
+		class_name += m_title.substring(12);
 		DWORD style = WS_OVERLAPPEDWINDOW;
-		HINSTANCE hinst = (HINSTANCE)GetModuleHandle(0);
+		HINSTANCE hinst = (HINSTANCE)GetModuleHandleW(0);
 		HWND hwnd = NULL;
 		HDC hdc = NULL;
 		WNDCLASSEXW wc;
@@ -512,6 +511,8 @@ void View::onPointerMove(int index, int x, int y)
 LRESULT CALLBACK MWindowProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam)
 {
 	View* view = (View*)GetWindowLongPtr(hwnd, GWLP_USERDATA);
+	UINT scancode = (lparam & 0x00ff0000) >> 16;
+    int extended  = (lparam & 0x01000000) != 0;
 	switch (message)
 	{
 		case WM_SYSKEYDOWN:
@@ -520,28 +521,28 @@ LRESULT CALLBACK MWindowProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lpar
 		case WM_KEYUP:
 			if(view)
 			{
-				UINT scan_code = (((UINT)lparam) & (0xFF0000)) >> 16;
-				UINT mapped_key;
-				view->onKey(MapPlatformKeyCode((int)wparam), (message == WM_KEYDOWN || message == WM_SYSKEYDOWN));
+				bool is_down = (message == WM_KEYDOWN || message == WM_SYSKEYDOWN);
 				switch(wparam)
 				{
 					case VK_CONTROL:
-						if(scan_code == MapVirtualKeyW(VK_LCONTROL, 0))
-							view->onKey(MapPlatformKeyCode((int)VK_LCONTROL), (message == WM_KEYDOWN));
-						else
-							view->onKey(MapPlatformKeyCode((int)VK_RCONTROL), (message == WM_KEYDOWN));	
+						view->onKey(MapPlatformKeyCode((int)wparam), is_down);
+						view->onKey(MapPlatformKeyCode((int)(extended ? VK_RCONTROL : VK_LCONTROL)), is_down);
 						break;
 					case VK_SHIFT:
-						if(scan_code == MapVirtualKeyW(VK_LSHIFT, 0))
-							view->onKey(MapPlatformKeyCode((int)VK_LSHIFT), (message == WM_KEYDOWN));
-						else
-							view->onKey(MapPlatformKeyCode((int)VK_RSHIFT), (message == WM_KEYDOWN));	
+						view->onKey(MapPlatformKeyCode((int)wparam), is_down);
+						view->onKey(MapPlatformKeyCode((int)(MapVirtualKeyW(scancode, MAPVK_VSC_TO_VK_EX))), (message == WM_KEYDOWN));
 						break;
 					case VK_MENU:
-						if(scan_code == MapVirtualKeyW(VK_LMENU, 0))
-							view->onKey(MapPlatformKeyCode((int)VK_LMENU), (message == WM_KEYDOWN));
-						else
-							view->onKey(MapPlatformKeyCode((int)VK_RMENU), (message == WM_KEYDOWN));	
+						view->onKey(axl::gl::KEY_ALT, is_down);
+						view->onKey(MapPlatformKeyCode((int)(extended ? VK_RMENU : VK_LMENU)), is_down);
+						break;
+					case VK_LWIN:
+					case VK_RWIN:
+						view->onKey(axl::gl::KEY_CMD, is_down);
+						view->onKey(MapPlatformKeyCode((int)wparam), is_down);
+						break;
+					default:
+						view->onKey(MapPlatformKeyCode((int)wparam), is_down);
 						break;
 				}
 			}
