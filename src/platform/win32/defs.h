@@ -52,3 +52,51 @@
 #ifndef VK_LAUNCH_APP2
 #define VK_LAUNCH_APP2 0xB7
 #endif
+#ifndef WM_POINTERDOWN
+#define WM_POINTERDOWN 0x0246
+#endif
+#ifndef WM_POINTERUP
+#define WM_POINTERUP 0x0247
+#endif
+#ifndef WM_POINTERUPDATE
+#define WM_POINTERUPDATE 0x0245
+#endif
+#ifndef GET_POINTERID_WPARAM
+#define GET_POINTERID_WPARAM(wparam) (wparam & 0xFFFF)
+#endif
+#ifndef IS_POINTER_PRIMARY_WPARAM
+#define IS_POINTER_PRIMARY_WPARAM(wparam) (wparam & 0x20000000)
+#endif
+// #ifndef POINTER_INFO
+// typedef struct tagPOINTER_INFO {
+//   POINTER_INPUT_TYPE         pointerType;
+//   UINT32                     pointerId;
+//   UINT32                     frameId;
+//   POINTER_FLAGS              pointerFlags;
+//   HANDLE                     sourceDevice;
+//   HWND                       hwndTarget;
+//   POINT                      ptPixelLocation;
+//   POINT                      ptHimetricLocation;
+//   POINT                      ptPixelLocationRaw;
+//   POINT                      ptHimetricLocationRaw;
+//   DWORD                      dwTime;
+//   UINT32                     historyCount;
+//   INT32                      InputData;
+//   DWORD                      dwKeyStates;
+//   UINT64                     PerformanceCount;
+//   POINTER_BUTTON_CHANGE_TYPE ButtonChangeType;
+// } POINTER_INFO;
+// #endif
+// #ifndef POINTER_TOUCH_INFO
+// typedef ULONG TOUCH_FLAGS;
+// typedef ULONG TOUCH_MASK;
+// typedef struct tagPOINTER_TOUCH_INFO {
+//   POINTER_INFO pointerInfo;
+//   TOUCH_FLAGS  touchFlags;
+//   TOUCH_MASK   touchMask;
+//   RECT         rcContact;
+//   RECT         rcContactRaw;
+//   UINT32       orientation;
+//   UINT32       pressure;
+// } POINTER_TOUCH_INFO;
+// #endif

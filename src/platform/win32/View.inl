@@ -1,3 +1,4 @@
+#include <cstdio>
 #include <cstdlib>
 #include "defs.h"
 #include <axl.glw/wglext.hpp>
@@ -20,7 +21,6 @@ static HCURSOR _hcur_help = NULL;
 static HCURSOR _hcur_ibeam = NULL;
 static HCURSOR _hcur_no = NULL;
 static HBRUSH _hbrush_black = NULL;
-
 
 LRESULT CALLBACK MWindowProc(HWND, UINT, WPARAM, LPARAM);
 
@@ -267,6 +267,7 @@ void View::cleanup()
 
 bool View::setPosition(const axl::math::Vec2<int>& position_)
 {
+	if(!m_reserved) return false;
 	if(SetWindowPos(((ViewData*)m_reserved)->hwnd, NULL, position_.x, position_.y, 0, 0, SWP_NOSIZE|SWP_NOREDRAW|SWP_NOZORDER) != FALSE)
 	{
 		this->m_position = position_;
@@ -277,6 +278,7 @@ bool View::setPosition(const axl::math::Vec2<int>& position_)
 
 bool View::setSize(const axl::math::Vec2<int>& size_)
 {
+	if(!m_reserved) return false;
 	if(SetWindowPos(((ViewData*)m_reserved)->hwnd, NULL, 0, 0, size_.x, size_.y, SWP_NOMOVE|SWP_FRAMECHANGED|SWP_NOZORDER) != FALSE)
 	{
 		this->m_size = size_;
@@ -287,6 +289,7 @@ bool View::setSize(const axl::math::Vec2<int>& size_)
 
 bool View::setTitle(const axl::utils::WString& title_)
 {
+	if(!m_reserved) return false;
 	if(SetWindowTextW(((ViewData*)m_reserved)->hwnd, title_.cwstr()) != FALSE)
 	{
 		this->m_title = title_;
@@ -297,6 +300,7 @@ bool View::setTitle(const axl::utils::WString& title_)
 
 bool View::setCursor(const Cursor& cursor_)
 {
+	if(!m_reserved) return false;
 	m_cursor = cursor_;
 	HCURSOR hcursor = NULL;
 	if(m_cursor == CUR_CUSTOM)
@@ -328,6 +332,7 @@ bool View::setCursor(const Cursor& cursor_)
 
 bool View::setCursorFromResource(int res_id)
 {
+	if(!m_reserved) return false;
 	m_cursor = CUR_CUSTOM;
 	HCURSOR hcursor = LoadCursorW(((ViewData*)m_reserved)->hinst, MAKEINTRESOURCEW(res_id));
 	if(!hcursor) return false;
@@ -338,6 +343,7 @@ bool View::setCursorFromResource(int res_id)
 
 bool View::setIcon(const axl::utils::WString& icon_file)
 {
+	if(!m_reserved) return false;
 	HICON icon_small = (HICON)NULL;
 	HICON icon_big = (HICON)NULL;
 	if(!icon_file.isNull())
@@ -359,6 +365,7 @@ bool View::setIcon(const axl::utils::WString& icon_file)
 
 bool View::setIconFromResource(int res_id)
 {
+	if(!m_reserved) return false;
 	LPWSTR res_str = MAKEINTRESOURCEW(res_id);
 	HICON icon_small = (HICON)LoadImageW(((ViewData*)m_reserved)->hinst, res_str, IMAGE_ICON, 32, 32, 0);
 	HICON icon_big = (HICON)LoadImageW(((ViewData*)m_reserved)->hinst, res_str, IMAGE_ICON, 48, 48, 0);
@@ -374,9 +381,30 @@ bool View::setIconFromResource(int res_id)
 	return true;
 }
 
+bool View::isPointerCaptured() const
+{
+	return m_reserved && GetCapture() == ((ViewData*)m_reserved)->hwnd;
+}
+
+bool View::capturePointer(bool capture) const
+{
+	if(!m_reserved) return false;
+	if(capture)
+	{
+		SetCapture(((ViewData*)m_reserved)->hwnd);
+		return GetCapture() == ((ViewData*)m_reserved)->hwnd;
+	}
+	else
+	{
+		if(GetCapture() != ((ViewData*)m_reserved)->hwnd)
+			return true;
+		return FALSE != ReleaseCapture();
+	}
+}
+
 bool View::show(ShowMode show_mode)
 {
-	if(!((ViewData*)m_reserved)->hwnd) return false;
+	if(!m_reserved || !((ViewData*)m_reserved)->hwnd) return false;
 	switch (show_mode)
 	{
 		case View::SM_HIDE:
@@ -446,11 +474,13 @@ bool View::show(ShowMode show_mode)
 
 bool View::setCursorPosition(const axl::math::Vec2<int>& pointer_position)
 {
+	if(!m_reserved) return false;
 	return SetCursorPos(m_position.x + pointer_position.x, m_position.y + pointer_position.y) != FALSE;
 }
 
 bool View::swap() const
 {
+	if(!m_reserved) return false;
 	return SwapBuffers(((ViewData*)m_reserved)->hdc) != FALSE;
 }
 
@@ -502,7 +532,7 @@ void View::onPointer(int index, int x, int y, bool is_down)
 void View::onPointerMove(int index, int x, int y)
 {
 	HCURSOR hcursor = ((ViewData*)this->m_reserved)->hcursor;
-	if(GetCursor() != hcursor)// && x >= 0 && y >= 0 && x <= m_size.x && y <= m_size.y)
+	if(GetCursor() != hcursor)
 	{
 		SetCursor(hcursor);
 	}
@@ -513,6 +543,15 @@ LRESULT CALLBACK MWindowProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lpar
 	View* view = (View*)GetWindowLongPtr(hwnd, GWLP_USERDATA);
 	UINT scancode = (lparam & 0x00ff0000) >> 16;
     int extended  = (lparam & 0x01000000) != 0;
+	static int bottom_index = 0;
+	static int ids[View::MAX_TOUCHES];// = {-1};//,-1,-1,-1,-1,-1,-1,-1,-1,-1};
+	static bool init_ids = false;
+	if(!init_ids)
+	{
+		for(int i=0; i<View::MAX_TOUCHES; ++i)
+			ids[i] = -1;
+		init_ids = true;
+	}
 	switch (message)
 	{
 		case WM_SYSKEYDOWN:
@@ -553,6 +592,73 @@ LRESULT CALLBACK MWindowProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lpar
 				view->onChar((char)wparam);
 			}
 			break;
+		case WM_POINTERUPDATE:
+			if(view)
+			{
+				const int id = GET_POINTERID_WPARAM(wparam);
+				int index = -1;
+				for(int i=0; i<View::MAX_TOUCHES; ++i)
+				{
+					if(ids[i] == id)
+					{
+						index = i;
+						break;
+					}
+				}
+				SHORT x, y;
+				x = (SHORT)LOWORD(lparam);
+				y = (SHORT)HIWORD(lparam);
+				view->onPointerMove(View::PI_TOUCH + index, x, y);
+			}
+			break;
+		case WM_POINTERDOWN:
+			if(view)
+			{
+				const int id = GET_POINTERID_WPARAM(wparam);
+				int index = -1;
+				if(IS_POINTER_PRIMARY_WPARAM(wparam))
+				{
+					ids[bottom_index] = id;
+					index = 0;
+				}
+				else
+				{
+					for(int i=0; i<View::MAX_TOUCHES; ++i)
+					{
+						if(ids[i] == -1)
+						{
+							index = i;
+							break;
+						}
+					}
+				}
+				ids[index] = id;
+				SHORT x, y;
+				x = (SHORT)LOWORD(lparam);
+				y = (SHORT)HIWORD(lparam);
+				view->onPointer(View::PI_TOUCH + index, x, y, true);
+			}
+			break;
+		case WM_POINTERUP:
+			if(view)
+			{
+				int id = GET_POINTERID_WPARAM(wparam);
+				int index = -1;
+				for(int i=0; i<View::MAX_TOUCHES; ++i)
+				{
+					if(ids[i] == id)
+					{
+						index = i;
+						break;
+					}
+				}
+				ids[index] = -1;
+				SHORT x, y;
+				x = (SHORT)LOWORD(lparam);
+				y = (SHORT)HIWORD(lparam);
+				view->onPointer(View::PI_TOUCH + index, x, y, false);
+			}
+			break;
 		case WM_LBUTTONDOWN:
 		case WM_LBUTTONUP:
 			if(view)
@@ -560,7 +666,7 @@ LRESULT CALLBACK MWindowProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lpar
 				SHORT x, y;
 				x = (SHORT)LOWORD(lparam);
 				y = (SHORT)HIWORD(lparam);
-				view->onPointer(View::PB_LEFT_BUTTON, (int)x, (int)y, (message == WM_LBUTTONDOWN));
+				view->onPointer(View::PI_LEFT_BUTTON, (int)x, (int)y, (message == WM_LBUTTONDOWN));
 			}
 			break;
 		case WM_RBUTTONDOWN:
@@ -570,7 +676,7 @@ LRESULT CALLBACK MWindowProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lpar
 				SHORT x, y;
 				x = (SHORT)LOWORD(lparam);
 				y = (SHORT)HIWORD(lparam);
-				view->onPointer(View::PB_RIGHT_BUTTON, (int)x, (int)y, (message == WM_RBUTTONDOWN));
+				view->onPointer(View::PI_RIGHT_BUTTON, (int)x, (int)y, (message == WM_RBUTTONDOWN));
 			}
 			break;
 		case WM_MBUTTONDOWN:
@@ -580,7 +686,7 @@ LRESULT CALLBACK MWindowProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lpar
 				SHORT x, y;
 				x = (SHORT)LOWORD(lparam);
 				y = (SHORT)HIWORD(lparam);
-				view->onPointer(View::PB_MIDDLE_BUTTON, (int)x, (int)y, (message == WM_MBUTTONDOWN));
+				view->onPointer(View::PI_MIDDLE_BUTTON, (int)x, (int)y, (message == WM_MBUTTONDOWN));
 			}
 			break;
 		case WM_MOUSEMOVE:
@@ -589,7 +695,7 @@ LRESULT CALLBACK MWindowProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lpar
 				SHORT x, y;
 				x = (SHORT)LOWORD(lparam);
 				y = (SHORT)HIWORD(lparam);
-				view->onPointerMove(0, (int)x, (int)y);
+				view->onPointerMove(View::PI_LEFT_BUTTON, (int)x, (int)y);
 			}
 			break;
 			break;

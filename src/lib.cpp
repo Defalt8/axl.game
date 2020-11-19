@@ -4,7 +4,7 @@ namespace axl {
 namespace gl {
 namespace lib {
 
-const Version version = { 0, 4, 2 };
+const Version version = { 0, 5, 2 };
 
 #if defined(AXLGL_MODULE)
 const LibraryType type = LT_MODULE;

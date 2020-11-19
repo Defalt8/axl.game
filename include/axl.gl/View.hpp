@@ -15,12 +15,12 @@ namespace gl {
 class AXLGLCXXAPI View
 {
 	public:
-		
-		constexpr static int MAX_POINTERS = 15;
+		constexpr static int MAX_TOUCHES = 10;
+		constexpr static int MAX_POINTERS = MAX_TOUCHES + 2;
 		// View pixel type.
 		enum PixelType { PT_RGB, PT_RGBA, PT_RGBA_FLOAT, PT_COLORINDEX };
 		// A mouse or other pointer's buttons.
-		enum PointerButton { PB_LEFT_BUTTON = 0, PB_RIGHT_BUTTON = 1, PB_MIDDLE_BUTTON = 2 };
+		enum PointerIndex { PI_RIGHT_BUTTON = 0, PI_MIDDLE_BUTTON = 1, PI_LEFT_BUTTON = 2, PI_TOUCH = 2 };
 		// View visiblity states.
 		enum VisiblityState { VS_SHOWN, VS_HIDDEN, VS_FULLSCREEN };
 		// View show modes.
@@ -77,6 +77,8 @@ class AXLGLCXXAPI View
 		bool setCursorFromResource(int res_id);
 		bool setIcon(const axl::utils::WString& icon_file);
 		bool setIconFromResource(int res_id);
+		bool isPointerCaptured() const;
+		bool capturePointer(bool capture) const;
 		bool show(ShowMode show_mode);
 		bool setCursorPosition(const axl::math::Vec2<int>& cursor_position);
 		bool swap() const;

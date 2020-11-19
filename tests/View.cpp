@@ -159,11 +159,15 @@ const char* CStrKeyCode(axl::gl::KeyCode key_code)
 	return "KEY_UNKNOWN";
 }
 
+bool printing_one_liner = false;
+
 class MyView : public axl::gl::View
 {
+		bool capture_on_click;
 	public:
 		MyView(const axl::utils::WString& title_, const axl::math::Vec2<int>& position_, const axl::math::Vec2<int>& size_, const Cursor& cursor_ = View::DefaultCursor) :
-			axl::gl::View(title_, position_, size_, cursor_)
+			axl::gl::View(title_, position_, size_, cursor_),
+			capture_on_click(false)
 		{}
 		bool onCreate()
 		{
@@ -172,6 +176,8 @@ class MyView : public axl::gl::View
 		}
 		void onDestroy()
 		{
+			if(printing_one_liner) putchar('\n');
+			printing_one_liner = false;
 			printf("Event.onDestroy\n");
 			axl::gl::Application::quit(0);
 			axl::gl::View::onDestroy();
@@ -179,26 +185,36 @@ class MyView : public axl::gl::View
 		void onMove(int x, int y)
 		{
 			axl::gl::View::onMove(x, y);
+			if(printing_one_liner) putchar('\n');
+			printing_one_liner = false;
 			printf("Event.onMove: %4d, %4d\n", x, y);
 		}
 		void onSize(int w, int h)
 		{
 			axl::gl::View::onSize(w, h);
+			if(printing_one_liner) putchar('\n');
+			printing_one_liner = false;
 			printf("Event.onSize: %4d, %4d\n", w, h);
 		}
 		void onPause(void)
 		{
 			axl::gl::View::onPause();
+			if(printing_one_liner) putchar('\n');
+			printing_one_liner = false;
 			printf("Event.onPause\n");
 		}
 		void onResume(void)
 		{
 			axl::gl::View::onResume();
+			if(printing_one_liner) putchar('\n');
+			printing_one_liner = false;
 			printf("Event.onResume\n");
 		}
 		void onKey(axl::gl::KeyCode key_code, bool is_down)
 		{
 			axl::gl::View::onKey(key_code, is_down);
+			if(printing_one_liner) putchar('\n');
+			printing_one_liner = false;
 			printf("Event.onKey: %3d - %s - %s\n", key_code, CStrKeyCode(key_code), (is_down ? "Down" : "Up"));
 			if(is_down)
 			{
@@ -211,24 +227,47 @@ class MyView : public axl::gl::View
 					case KEY_F2:
 						show(visiblity==VS_FULLSCREEN ? SM_SHOW : SM_FULLSCREEN);
 						break;
+					case KEY_F3:
+						if(capturePointer(!isPointerCaptured()))
+							printf("> Pointer Captured: %s\n", isPointerCaptured() ? "yes" : "no");
+						break;
+					case KEY_F4:
+						capture_on_click = !capture_on_click;
+						printf("> Capture on click: %s\n", capture_on_click ? "yes" : "no");
+						break;
 				}
 			}
 		}
 		void onChar(char char_code)
 		{
 			View::onChar(char_code);
-			// printf("Event.onChar: %3hhd - '%c'\n", char_code, char_code);
+			printf("Event.onChar: %3hhd - '%c'\n", char_code, char_code);
 		}
 		void onPointer(int index, int x, int y, bool is_down)
 		{
 			View::onPointer(index, x, y, is_down);
-			printf("Event.onPointer: [%d]-> x(%d) y(%d) - %s \n", index, x, y, (is_down ? "Down" : "Up"));
+			if(capture_on_click) capturePointer(is_down);
+			if(printing_one_liner) putchar('\n');
+			printing_one_liner = false;
+			printf("Event.onPointer: [%d]-> x(%4d) y(%4d) - %s \n", index, x, y, (is_down ? "Down" : "Up"));
+			if(pointers[PI_TOUCH] && pointers[PI_TOUCH+1])
+				printf("\rTouch2Delta: (%4d, %4d)", touch2.x - touch1.x, touch2.y - touch1.y);
 		}
 		void onPointerMove(int index, int x, int y)
 		{
 			View::onPointerMove(index, x, y);
-			// printf("Event.onPointerMove: [%d]-> x(%d) y(%d)\r", index, x, y);
+			switch(index)
+			{
+				case PI_TOUCH + 0: touch1.set(x, y); break;
+				case PI_TOUCH + 1: touch2.set(x, y); break;
+			}
+			printing_one_liner = true;
+			if(pointers[PI_TOUCH] && pointers[PI_TOUCH+1])
+				printf("\rTouch2Delta: (%4d, %4d)", touch2.x - touch1.x, touch2.y - touch1.y);
+			else
+				printf("\rEvent.onPointerMove: [%d]-> x(%4d) y(%4d)", index, x, y);
 		}
+		axl::math::Vec2<int> touch1, touch2;
 };
 
 void terminating()
