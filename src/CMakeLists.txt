@@ -69,6 +69,9 @@ else()
 	set( LIBOPENGL32 -lopengl32 )
 endif()
 
+set( LIBAXLUTIL_EXPORT_DIR "${axl.gl_BINARY_DIR}/tests" )
+set( LIBAXLMATH_EXPORT_DIR "${axl.gl_BINARY_DIR}/tests" )
+set( LIBAXLGLW_EXPORT_DIR "${axl.gl_BINARY_DIR}/tests" )
 add_subdirectory( "${LIBAXLUTIL_DIR}" "axl.util" )
 add_subdirectory( "${LIBAXLMATH_DIR}" "axl.math" )
 add_subdirectory( "${LIBAXLGLW_DIR}" "axl.glw" )
@@ -80,6 +83,7 @@ target_include_directories( axl.gl
 
 target_link_libraries( axl.gl
 	PUBLIC axl.util
+	PUBLIC axl.math
 	PUBLIC axl.glw
 	PUBLIC ${LIBUSER32}
 	PUBLIC ${LIBGDI32}

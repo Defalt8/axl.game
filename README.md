@@ -4,7 +4,7 @@ A simple C++ OpenGL based graphics and graphics user interface(GUI) library.
 
 ## Versions and supported platforms
 
-- Latest version: 0.5.9 alpha
+- Latest version: 0.5.13 alpha
 - Currently supported platforms: **Windows**
 
 ## Library Headers
