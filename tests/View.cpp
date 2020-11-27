@@ -165,7 +165,7 @@ class MyView : public axl::gl::View
 {
 		bool capture_on_click;
 	public:
-		MyView(const axl::utils::WString& title_, const axl::math::Vec2<int>& position_, const axl::math::Vec2<int>& size_, const Cursor& cursor_ = View::DefaultCursor) :
+		MyView(const axl::util::WString& title_, const axl::math::Vec2<int>& position_, const axl::math::Vec2<int>& size_, const Cursor& cursor_ = View::DefaultCursor) :
 			axl::gl::View(title_, position_, size_, cursor_),
 			capture_on_click(false)
 		{}
@@ -281,15 +281,32 @@ int main(int argc, char *argv[])
 	using namespace axl;
 	using namespace axl::gl;
 	using namespace axl::math;
-	printf("axl.gl - version %u.%u.%u  %s %s\n", lib::version.major, lib::version.minor, lib::version.patch, LIB_TYPE, DEBUG_REL);
-	printf("axl.glw - version %u.%u.%u  %s %s\n", axl::glw::lib::version.major, axl::glw::lib::version.minor, axl::glw::lib::version.patch, axlglwLibraryType(), axl::glw::lib::debug ? "Debug" : "Release");
+	printf("axl.gl - version %u.%u.%u  %s %s\n", lib::VERSION.major, lib::VERSION.minor, lib::VERSION.patch, libType(lib::LIBRARY_TYPE), buildType(lib::BUILD_TYPE));
+	printf("axl.glw - version %u.%u.%u  %s %s\n", axl::glw::lib::VERSION.major, axl::glw::lib::VERSION.minor, axl::glw::lib::VERSION.patch, libType(axl::glw::lib::LIBRARY_TYPE), buildType(axl::glw::lib::BUILD_TYPE));
 	puts("----------------------------------------");
 	std::atexit(terminating);
 	Vec2<int> screen = Application::getCurrentDesktopSize(), size(640, 480);
 	MyView view(L"My View", (screen - size)/2, size);
 	view.setCursor(View::CUR_HAND);
-	Assertv(view.setIcon(L"Resources/Icons/axl.ico"), verbose);
+	Assertv(view.setIcon(L"resources/icons/axl.ico"), verbose);
 	Assertv(view.create(), verbose);
+	printf("view.config.id: %ld\n", view.config.id);
+	printf("view.config.pixel_type: %s\n", (view.config.pixel_type==View::Config::PT_RGB?"RGB":(view.config.pixel_type==View::Config::PT_RGBA?"RGBA":view.config.pixel_type==View::Config::PT_RGBA_FLOAT?"RGBA_FLOAT":view.config.pixel_type==View::Config::PT_COLORINDEX?"Colorindex":"Unknown")));
+	printf("view.config.bits_color: %hhd\n", view.config.bits_color);
+	printf("view.config.bits_red: %hhd\n", view.config.bits_red);
+	printf("view.config.bits_green: %hhd\n", view.config.bits_green);
+	printf("view.config.bits_blue: %hhd\n", view.config.bits_blue);
+	printf("view.config.bits_alpha: %hhd\n", view.config.bits_alpha);
+	printf("view.config.bits_depth: %hhd\n", view.config.bits_depth);
+	printf("view.config.bits_stencil: %hhd\n", view.config.bits_stencil);
+	printf("view.config.bits_accum: %hhd\n", view.config.bits_accum);
+	printf("view.config.bits_red_accum: %hhd\n", view.config.bits_red_accum);
+	printf("view.config.bits_green_accum: %hhd\n", view.config.bits_green_accum);
+	printf("view.config.bits_blue_accum: %hhd\n", view.config.bits_blue_accum);
+	printf("view.config.bits_alpha_accum: %hhd\n", view.config.bits_alpha_accum);
+	printf("view.config.samples: %hhd\n", view.config.samples);
+	printf("view.config.double_buffered: %hhd\n", view.config.double_buffered);
+	printf("view.config.stereo: %hhd\n", view.config.stereo);
 	Assertv(0 == wcscmp(view.title.cwstr(), L"My View"), verbose);
 	Assertv(view.setTitle(L"View"), verbose);
 	Assertv(0 == wcscmp(view.title.cwstr(), L"View"), verbose);

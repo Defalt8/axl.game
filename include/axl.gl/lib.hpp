@@ -1,21 +1,8 @@
 #pragma once
 
-#if defined(AXLGL_MODULE)
+#if defined(LIBAXLGL_SHARED)
 #	ifdef WIN32
-#		ifdef AXLGL_BUILD
-#			define AXLGLAPI extern __declspec(dllexport)
-#			define AXLGLCXXAPI __declspec(dllexport)
-#		else
-#			define AXLGLAPI extern __declspec(dllimport)
-#			define AXLGLCXXAPI __declspec(dllimport)
-#		endif
-#	else
-#		define AXLGLAPI extern
-#		define AXLGLCXXAPI
-#	endif
-#elif defined(AXLGL_SHARED)
-#	ifdef WIN32
-#		ifdef AXLGL_BUILD
+#		ifdef LIBAXLGL_BUILD
 #			define AXLGLAPI extern __declspec(dllexport)
 #			define AXLGLCXXAPI __declspec(dllexport)
 #		else
@@ -27,9 +14,6 @@
 #		define AXLGLCXXAPI
 #	endif
 #else
-#	ifndef AXLGL_STATIC
-#		define AXLGL_STATIC
-#	endif
 #	define AXLGLAPI extern
 #	define AXLGLCXXAPI
 #endif
@@ -38,24 +22,27 @@ namespace axl {
 namespace gl {
 namespace lib {
 
-enum LibraryType {
+typedef enum LibraryType {
 	LT_STATIC,
-	LT_SHARED,
-	LT_MODULE
-};
-typedef enum LibraryType LibraryType;
+	LT_SHARED
+} LibraryType;
 
-struct Version
+typedef enum BuildType {
+	BT_DEBUG,
+	BT_RELEASE,
+	BT_OTHER
+} BuildType;
+
+typedef struct Version
 {
-	short major;
-	short minor;
-	short patch;
-};
-typedef struct Version Version;
+	unsigned short major;
+	unsigned short minor;
+	unsigned short patch;
+} Version;
 
-AXLGLAPI const Version version;
-AXLGLAPI const LibraryType type;
-AXLGLAPI const bool debug;
+AXLGLAPI const Version VERSION;
+AXLGLAPI const LibraryType LIBRARY_TYPE;
+AXLGLAPI const BuildType BUILD_TYPE;
 
 } // namespace axl.gl.lib	
 } // namespace axl.gl	

@@ -1,4 +1,4 @@
-#include <axl.glw/platform.hpp>
+#include <axl.glw/platform.h>
 #if PLATFORM==PLATFORM_WINDOWS
 #include "platform/win32/Context.inl"
 #else

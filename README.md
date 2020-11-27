@@ -1,6 +1,11 @@
 # axl.gl
 
-A simple C++ OpenGL graphics library.
+A simple C++ OpenGL based graphics and graphics user interface(GUI) library.
+
+## Versions and supported platforms
+
+- Latest version: 0.5.9 alpha
+- Currently supported platforms: **Windows**
 
 ## Library Headers
 

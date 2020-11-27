@@ -1,6 +1,6 @@
 #pragma once
 #include <axl.math/Vec2.hpp>
-#include <axl.utils/WString.hpp>
+#include <axl.util/WString.hpp>
 #include "lib.hpp"
 #include "KeyCodes.hpp"
 #include "Context.hpp"
@@ -17,8 +17,6 @@ class AXLGLCXXAPI View
 	public:
 		constexpr static int MAX_TOUCHES = 10;
 		constexpr static int MAX_POINTERS = MAX_TOUCHES + 2;
-		// View pixel type.
-		enum PixelType { PT_RGB, PT_RGBA, PT_RGBA_FLOAT, PT_COLORINDEX };
 		// A mouse or other pointer's buttons.
 		enum PointerIndex { PI_RIGHT_BUTTON = 0, PI_MIDDLE_BUTTON = 1, PI_LEFT_BUTTON = 2, PI_TOUCH = 2 };
 		// View visiblity states.
@@ -32,6 +30,8 @@ class AXLGLCXXAPI View
 		 */
 		class AXLGLCXXAPI Config
 		{
+			public:
+				enum PixelType { PT_RGB, PT_RGBA, PT_RGBA_FLOAT, PT_COLORINDEX };
 			public:
 				Config();
 				Config(long id, PixelType pixel_type, char bits_color, char bits_red, char bits_green, char bits_blue, char bits_alpha, char bits_depth, char bits_stencil, char bits_accum, char bits_red_accum, char bits_green_accum, char bits_blue_accum, char bits_alpha_accum, char samples, bool double_buffered, bool stereo);
@@ -64,7 +64,7 @@ class AXLGLCXXAPI View
 				static const Config Null;
 		};
 	public:
-		View(const axl::utils::WString& title, const axl::math::Vec2<int>& position, const axl::math::Vec2<int>& size, const Cursor& cursor = View::DefaultCursor);
+		View(const axl::util::WString& title, const axl::math::Vec2<int>& position, const axl::math::Vec2<int>& size, const Cursor& cursor = View::DefaultCursor);
 		virtual ~View();
 		bool isValid() const;
 		bool create(bool recreate = false, const Config* configs = (const Config*)0, int configs_count = 0);
@@ -72,10 +72,10 @@ class AXLGLCXXAPI View
 		static void cleanup();
 		bool setPosition(const axl::math::Vec2<int>& position);
 		bool setSize(const axl::math::Vec2<int>& size);
-		bool setTitle(const axl::utils::WString& title);
+		bool setTitle(const axl::util::WString& title);
 		bool setCursor(const Cursor& cursor);
 		bool setCursorFromResource(int res_id);
-		bool setIcon(const axl::utils::WString& icon_file);
+		bool setIcon(const axl::util::WString& icon_file);
 		bool setIconFromResource(int res_id);
 		bool isPointerCaptured() const;
 		bool capturePointer(bool capture) const;
@@ -96,7 +96,7 @@ class AXLGLCXXAPI View
 	public:
 		const axl::math::Vec2<int>& position;
 		const axl::math::Vec2<int>& size;
-		const axl::utils::WString& title;
+		const axl::util::WString& title;
 		const View::Config& config;
 		const View::Cursor& cursor;
 		const VisiblityState& visiblity;
@@ -106,7 +106,7 @@ class AXLGLCXXAPI View
 	private:
 		axl::math::Vec2<int> m_position;
 		axl::math::Vec2<int> m_size;
-		axl::utils::WString m_title;
+		axl::util::WString m_title;
 		View::Config m_config;
 		View::Cursor m_cursor;
 		VisiblityState m_visiblity;

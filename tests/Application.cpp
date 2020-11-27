@@ -12,7 +12,7 @@ int main(int argc, char *argv[])
 	using namespace axl;
 	using namespace axl::gl;
 	using namespace axl::math;
-	printf("axl.gl - version %u.%u.%u  %s %s\n", lib::version.major, lib::version.minor, lib::version.patch, LIB_TYPE, DEBUG_REL);
+	printf("axl.gl - version %u.%u.%u  %s %s\n", lib::VERSION.major, lib::VERSION.minor, lib::VERSION.patch, libType(lib::LIBRARY_TYPE), buildType(lib::BUILD_TYPE));
 	puts("----------------------------------------");
 	Vec2<int> display_size, pointer_position;
 	display_size = Application::getCurrentDisplaySize();

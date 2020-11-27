@@ -13,7 +13,7 @@ class GameView : public axl::gl::View
 {
 	public:
 		GameView(
-			const axl::utils::WString& _title,
+			const axl::util::WString& _title,
 			axl::math::Vec2<int> _pos,
 			axl::math::Vec2<int> _size,
 			axl::gl::View::Cursor _cursor = axl::gl::View::DefaultCursor) :
@@ -43,8 +43,8 @@ int main(int argc, char *argv[])
 	using namespace axl;
 	using namespace axl::gl;
 	using namespace axl::math;
-	printf("axl.gl - version %u.%u.%u  %s %s\n", lib::version.major, lib::version.minor, lib::version.patch, LIB_TYPE, DEBUG_REL);
-	printf("axl.glw - version %u.%u.%u  %s %s\n", axl::glw::lib::version.major, axl::glw::lib::version.minor, axl::glw::lib::version.patch, axlglwLibraryType(), axl::glw::lib::debug ? "Debug" : "Release");
+	printf("axl.gl - version %u.%u.%u  %s %s\n", lib::VERSION.major, lib::VERSION.minor, lib::VERSION.patch, libType(lib::LIBRARY_TYPE), buildType(lib::BUILD_TYPE));
+	printf("axl.glw - version %u.%u.%u  %s %s\n", axl::glw::lib::VERSION.major, axl::glw::lib::VERSION.minor, axl::glw::lib::VERSION.patch, libType(axl::glw::lib::LIBRARY_TYPE), buildType(axl::glw::lib::BUILD_TYPE));
 	puts("----------------------------------------");
 	atexit(terminate);
 	axl::math::Vec2<int> screen = axl::gl::Application::getCurrentDesktopSize();
@@ -52,10 +52,10 @@ int main(int argc, char *argv[])
 	axl::math::Vec2<int> pos = (screen - size)/2;
 	GameView::Config view_configs[] =
 	{
-		GameView::Config(1, GameView::PT_RGBA, 32,8,8,8,8, 24,8, 0,0,0,0,0, 16, true, false),
-		GameView::Config(2, GameView::PT_RGBA, 32,8,8,8,8, 24,8, 0,0,0,0,0, 8, true, false),
-		GameView::Config(3, GameView::PT_RGBA, 32,8,8,8,8, 24,8, 0,0,0,0,0, 4, true, false),
-		GameView::Config(4, GameView::PT_RGBA, 32,8,8,8,8, 24,8, 0,0,0,0,0, 0, true, false)
+		GameView::Config(1, GameView::Config::PT_RGBA, 32,8,8,8,8, 24,8, 0,0,0,0,0, 16, true, false),
+		GameView::Config(2, GameView::Config::PT_RGBA, 32,8,8,8,8, 24,8, 0,0,0,0,0, 8, true, false),
+		GameView::Config(3, GameView::Config::PT_RGBA, 32,8,8,8,8, 24,8, 0,0,0,0,0, 4, true, false),
+		GameView::Config(4, GameView::Config::PT_RGBA, 32,8,8,8,8, 24,8, 0,0,0,0,0, 0, true, false)
 	};
 	GameView view(L"Context Test", pos, size, GameView::CUR_CROSS);
 	Assertv(view.setIcon(L"Resources/Icons/axl.ico"), verbose);

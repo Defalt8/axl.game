@@ -118,8 +118,8 @@ bool Context::create(bool recreate, const View* view_, const Context::Config* co
 	{
 		hglrc = wglCreateContext(hdc);
 		m_config.profile = Config::GLP_COMPATIBLITY;
-		m_config.major_version = axl::glw::GL_MAJOR_VERSION;
-		m_config.minor_version = axl::glw::GL_MINOR_VERSION;
+		m_config.major_version = axl::glw::MAJOR_GL_VERSION;
+		m_config.minor_version = axl::glw::MINOR_GL_VERSION;
 	}
 	((ContextData*)m_reserved)->hglrc = hglrc;
 	return ((ContextData*)m_reserved)->hglrc != NULL;

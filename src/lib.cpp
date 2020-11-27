@@ -4,20 +4,20 @@ namespace axl {
 namespace gl {
 namespace lib {
 
-const Version version = { 0, 5, 2 };
+const Version VERSION = { LIBAXLGL_VERSION_MAJOR, LIBAXLGL_VERSION_MINOR, LIBAXLGL_VERSION_PATCH };
 
-#if defined(AXLGL_MODULE)
-const LibraryType type = LT_MODULE;
-#elif defined(AXLGL_SHARED)
-const LibraryType type = LT_SHARED;
+#if defined(AXLGL_SHARED)
+const LibraryType LIBRARY_TYPE = LT_SHARED;
 #else
-const LibraryType type = LT_STATIC;
+const LibraryType LIBRARY_TYPE = LT_STATIC;
 #endif
 
 #ifdef DEBUG
-const bool Debug = true;
+const BuildType BUILD_TYPE = BT_DEBUG;
+#elif defined(NDEBUG)
+const BuildType BUILD_TYPE = BT_RELEASE;
 #else
-const bool Debug = false;
+const BuildType BUILD_TYPE = BT_OTHER;
 #endif
 
 } // namespace axl.gl.lib	

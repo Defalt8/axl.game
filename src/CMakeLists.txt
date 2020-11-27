@@ -1,49 +1,87 @@
-cmake_minimum_required( VERSION 3.17 )
-
-# Library
-add_library( axl.gl ${LIB_TYPE}
+# library
+set( LIBAXLGL_OUTPUT_NAME axl.gl )
+add_library( axl.gl ${LIBAXLGL_TYPE}
 	"lib.cpp"
 	"Application.cpp"
 	"KeyMap.cpp"
 	"View.cpp"
 	"Context.cpp"
 )
-# Target link libraries
-if( ${MSVC} )
-	set( LIBGDI32 gdi32.lib )
-	set( LIBOPENGL32 opengl32.lib )
-elseif( ${WIN32} )
-	set( LIBGDI32 -lgdi32 )
-	set( LIBOPENGL32 -lopengl32 )
-else()
-	set( LIBOPENGL32 -lopengl32 )
-endif()
-set( AXLGLW_LIB_SUFFIX "" )
-if( ${AXLGLW_LIB_DEBUG} )
-	set( AXLGLW_LIB_SUFFIX d )
-endif()
-if( "${AXLGLW_LIB_TYPE}" STREQUAL "MODULE" )
-	set( LIBAXLGLW -laxl.glw${AXLGLW_LIB_SUFFIX} )
-elseif( "${AXLGLW_LIB_TYPE}" STREQUAL "SHARED" )
-	set( LIBAXLGLW -laxl.glwr${AXLGLW_LIB_SUFFIX} )
-else()
-	set( LIBAXLGLW -laxl.glws${AXLGLW_LIB_SUFFIX} )
-endif()
-if( "${CMAKE_BUILD_TYPE}" STREQUAL "Debug" )
-	target_link_libraries( axl.gl -laxl.utilsd ${LIBAXLGLW} ${LIBGDI32} ${LIBOPENGL32} )
-else()
-	target_link_libraries( axl.gl -laxl.utils ${LIBAXLGLW} ${LIBGDI32} ${LIBOPENGL32} )
-endif()
-# Target compile definitions
-target_compile_definitions( axl.gl PUBLIC ${LIB_TYPE} AXLGLW_${AXLGLW_LIB_TYPE} )
-target_compile_definitions( axl.gl PRIVATE AXLGL_BUILD )
-# Target properties
-set_target_properties( axl.gl PROPERTIES
-	LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/tests"
-	RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/tests"
+target_compile_definitions( axl.gl
+	PRIVATE LIBAXLGL_BUILD
+	PUBLIC LIBAXLGL_VERSION_MAJOR=${axl.gl_VERSION_MAJOR}
+	PUBLIC LIBAXLGL_VERSION_MINOR=${axl.gl_VERSION_MINOR}
+	PUBLIC LIBAXLGL_VERSION_PATCH=${axl.gl_VERSION_PATCH}
 )
+if( "${LIBAXLGL_TYPE}" MATCHES "^[Ss][Tt][Aa][Tt][Ii][Cc]$" )
+	set( LIBAXLGL_SUFFIX s )
+	target_compile_definitions( axl.gl
+		PUBLIC LIBAXLGL_STATIC
+	)
+	if( INSTALL_ARCHIVES )
+		install( TARGETS axl.gl
+			ARCHIVE DESTINATION "${CMAKE_INSTALL_PREFIX}/${ARCHIVES_INSTALL_DIR}"
+		)
+	endif()
+elseif( "${LIBAXLGL_TYPE}" MATCHES "^[Ss][Hh][Aa][Rr][Ee][Dd]$" )
+	target_compile_definitions( axl.gl
+		PUBLIC LIBAXLGL_SHARED
+	)
+	if( INSTALL_ARCHIVES )
+		install( TARGETS axl.gl
+			ARCHIVE DESTINATION "${CMAKE_INSTALL_PREFIX}/${ARCHIVES_INSTALL_DIR}"
+		)
+	endif()
+	if( INSTALL_BINARIES )
+		install( TARGETS axl.gl
+			RUNTIME DESTINATION "${CMAKE_INSTALL_PREFIX}/${BINARY_INSTALL_DIR}"
+		)
+	endif()
+else()
+	set( LIBAXLGL_SUFFIX l )
+endif()
+
+if( "${CMAKE_BUILD_TYPE}" MATCHES "[Dd][Ee][Bb][Uu][Gg]" )
+	set( LIBAXLGL_SUFFIX "${LIBAXLGL_SUFFIX}d" )
+endif()
+
 set_target_properties( axl.gl PROPERTIES
-	ARCHIVE_OUTPUT_NAME axl.gl${LIB_SUFFIX}
-	RUNTIME_OUTPUT_NAME axl.gl${LIB_SUFFIX}
-	LIBRARY_OUTPUT_NAME axl.gl${LIB_SUFFIX}
+	OUTPUT_NAME "${LIBAXLGL_OUTPUT_NAME}${LIBAXLGL_SUFFIX}"
+	ARCHIVE_OUTPUT_NAME "${LIBAXLGL_OUTPUT_NAME}${LIBAXLGL_SUFFIX}"
+	LIBRARY_OUTPUT_NAME "${LIBAXLGL_OUTPUT_NAME}${LIBAXLGL_SUFFIX}"
+	RUNTIME_OUTPUT_NAME "${LIBAXLGL_OUTPUT_NAME}${LIBAXLGL_SUFFIX}"
+	LIBRARY_OUTPUT_DIRECTORY "${LIBAXLGL_EXPORT_DIR}"
+	RUNTIME_OUTPUT_DIRECTORY "${LIBAXLGL_EXPORT_DIR}"
+)
+
+# Target link libraries
+if( ${WIN32} )
+	if( ${MSVC} )
+		set( LIBUSER32 User32.lib )
+		set( LIBGDI32 gdi32.lib )
+		set( LIBOPENGL32 opengl32.lib )
+	else()
+		set( LIBUSER32 -luser32 )
+		set( LIBGDI32 -lgdi32 )
+		set( LIBOPENGL32 -lopengl32 )
+	endif()
+else()
+	set( LIBOPENGL32 -lopengl32 )
+endif()
+
+add_subdirectory( "${LIBAXLUTIL_DIR}" "axl.util" )
+add_subdirectory( "${LIBAXLMATH_DIR}" "axl.math" )
+add_subdirectory( "${LIBAXLGLW_DIR}" "axl.glw" )
+target_include_directories( axl.gl
+	PUBLIC "${LIBAXLUTIL_DIR}/include"
+	PUBLIC "${LIBAXLMATH_DIR}/include"
+	PUBLIC "${LIBAXLGLW_DIR}/include"
+)
+
+target_link_libraries( axl.gl
+	PUBLIC axl.util
+	PUBLIC axl.glw
+	PUBLIC ${LIBUSER32}
+	PUBLIC ${LIBGDI32}
+	PUBLIC ${LIBOPENGL32}
 )

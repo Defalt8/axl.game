@@ -2,29 +2,48 @@
 #include <axl.gl/lib.hpp>
 #include <axl.glw/lib.hpp>
 
-#if defined(DEBUG)
-#	define DEBUG_REL "Debug"
-#else
-#	define DEBUG_REL "Release"
-#endif
-
-#if defined(AXLGL_MODULE)
-#	define LIB_TYPE "MODULE"
-#elif defined(AXLGL_SHARED)
-#	define LIB_TYPE "SHARED"
-#elif defined(AXLGL_STATIC)
-#	define LIB_TYPE "STATIC"
-#else
-#	define LIB_TYPE ""
-#endif
-
-const char* axlglwLibraryType()
+const char* libType(axl::gl::lib::LibraryType lib_type)
 {
-	switch(axl::glw::lib::type)
+	using namespace axl::gl::lib;
+	switch (lib_type)
 	{
-		case axl::glw::lib::LT_MODULE: return "MODULE";
-		case axl::glw::lib::LT_SHARED: return "SHARED";
-		case axl::glw::lib::LT_STATIC: return "STATIC";
-		default: return "-";
+		case LT_SHARED: return "SHARED";
+		default:
+		case LT_STATIC: return "STATIC";
+	}
+}
+
+const char* libType(axl::glw::lib::LibraryType lib_type)
+{
+	using namespace axl::glw::lib;
+	switch (lib_type)
+	{
+		case LT_SHARED: return "SHARED";
+		default:
+		case LT_STATIC: return "STATIC";
+	}
+}
+
+const char* buildType(axl::gl::lib::BuildType build_type)
+{
+	using namespace axl::gl::lib;
+	switch (build_type)
+	{
+		case BT_DEBUG: return "Debug";
+		case BT_RELEASE: return "Release";
+		default:
+		case BT_OTHER: return "Other";
+	}
+}
+
+const char* buildType(axl::glw::lib::BuildType build_type)
+{
+	using namespace axl::glw::lib;
+	switch (build_type)
+	{
+		case BT_DEBUG: return "Debug";
+		case BT_RELEASE: return "Release";
+		default:
+		case BT_OTHER: return "Other";
 	}
 }

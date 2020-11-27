@@ -24,7 +24,7 @@ static HBRUSH _hbrush_black = NULL;
 
 LRESULT CALLBACK MWindowProc(HWND, UINT, WPARAM, LPARAM);
 
-View::View(const axl::utils::WString& title_, const axl::math::Vec2<int>& position_, const axl::math::Vec2<int>& size_, const Cursor& cursor_) :
+View::View(const axl::util::WString& title_, const axl::math::Vec2<int>& position_, const axl::math::Vec2<int>& size_, const Cursor& cursor_) :
 	position(m_position),
 	size(m_size),
 	title(m_title),
@@ -102,7 +102,7 @@ bool View::create(bool recreate, const Config* configs_, int configs_count_)
 				DestroyWindow(((ViewData*)m_reserved)->hwnd);
 			}
 		}
-		axl::utils::WString class_name(L"AXL.GLW.VIEW.");
+		axl::util::WString class_name(L"AXL.GLW.VIEW.");
 		class_name += m_title.substring(12);
 		DWORD style = WS_OVERLAPPEDWINDOW;
 		HINSTANCE hinst = (HINSTANCE)GetModuleHandleW(0);
@@ -164,9 +164,9 @@ bool View::create(bool recreate, const Config* configs_, int configs_count_)
 					switch(config->pixel_type)
 					{
 						default:
-						case View::PT_RGBA: pixel_type = axl::glw::wglext::WGL_TYPE_RGBA_ARB; break;
-						case View::PT_RGBA_FLOAT: pixel_type = axl::glw::wglext::WGL_TYPE_RGBA_FLOAT_ARB; break;
-						case View::PT_COLORINDEX: pixel_type = axl::glw::wglext::WGL_TYPE_COLORINDEX_ARB; break;
+						case View::Config::PT_RGBA: pixel_type = axl::glw::wglext::WGL_TYPE_RGBA_ARB; break;
+						case View::Config::PT_RGBA_FLOAT: pixel_type = axl::glw::wglext::WGL_TYPE_RGBA_FLOAT_ARB; break;
+						case View::Config::PT_COLORINDEX: pixel_type = axl::glw::wglext::WGL_TYPE_COLORINDEX_ARB; break;
 					}
 					int attribs[] = {
 						axl::glw::wglext::WGL_DRAW_TO_WINDOW_ARB, axl::glw::gl::GL_TRUE,
@@ -205,14 +205,14 @@ bool View::create(bool recreate, const Config* configs_, int configs_count_)
 					}
 					else return false;
 				}
-				else if(config->pixel_type != View::PT_RGBA_FLOAT)
+				else if(config->pixel_type != View::Config::PT_RGBA_FLOAT)
 				{
 					BYTE pixel_type;
 					switch(config->pixel_type)
 					{
 						default:
-						case View::PT_RGBA: pixel_type = PFD_TYPE_RGBA; break;
-						case View::PT_COLORINDEX: pixel_type = PFD_TYPE_COLORINDEX; break;
+						case View::Config::PT_RGBA: pixel_type = PFD_TYPE_RGBA; break;
+						case View::Config::PT_COLORINDEX: pixel_type = PFD_TYPE_COLORINDEX; break;
 					}
 					PIXELFORMATDESCRIPTOR pfd;
 					ZeroMemory(&pfd, sizeof(PIXELFORMATDESCRIPTOR));
@@ -287,7 +287,7 @@ bool View::setSize(const axl::math::Vec2<int>& size_)
 	return false;
 }
 
-bool View::setTitle(const axl::utils::WString& title_)
+bool View::setTitle(const axl::util::WString& title_)
 {
 	if(!m_reserved) return false;
 	if(SetWindowTextW(((ViewData*)m_reserved)->hwnd, title_.cwstr()) != FALSE)
@@ -341,7 +341,7 @@ bool View::setCursorFromResource(int res_id)
 	return true;
 }
 
-bool View::setIcon(const axl::utils::WString& icon_file)
+bool View::setIcon(const axl::util::WString& icon_file)
 {
 	if(!m_reserved) return false;
 	HICON icon_small = (HICON)NULL;
@@ -849,7 +849,7 @@ bool View::Config::operator!=(const Config& rhs) const
 
 View::Config View::Config::Default(
 	0, // id
-	View::PT_RGB, // pixel_type
+	PT_RGB, // pixel_type
 	24, // bits_color
 	8, // bits_red
 	8, // bits_green
@@ -869,7 +869,7 @@ View::Config View::Config::Default(
 
 const View::Config View::Config::Null(
 	-1, // id
-	View::PT_RGB, // pixel_type
+	PT_RGB, // pixel_type
 	-1, // bits_color
 	-1, // bits_red
 	-1, // bits_green
