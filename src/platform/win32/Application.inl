@@ -1,10 +1,10 @@
 #define WIN32_LEAN_AND_MEAN 1
 #include <windows.h>
-#include <axl.gl/Application.hpp>
-#include <axl.gl/KeyMap.hpp>
+#include <axl.game/Application.hpp>
+#include <axl.game/KeyMap.hpp>
 
 namespace axl {
-namespace gl {
+namespace game {
 using namespace axl::math;
 
 Vec2<int> Application::getCurrentDisplaySize()
@@ -79,5 +79,5 @@ void Application::loopEvents()
 
 bool Application::IsQuitting = false;
 
-} // namespace axl.gl
+} // namespace axl.game
 } // namespace axl

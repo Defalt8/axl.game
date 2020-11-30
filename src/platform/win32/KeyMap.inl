@@ -1,9 +1,9 @@
 #include "defs.h"
-#include <axl.gl/KeyMap.hpp>
-#include <axl.gl/KeyCodes.hpp>
+#include <axl.game/KeyMap.hpp>
+#include <axl.game/KeyCodes.hpp>
 
 namespace axl {
-namespace gl {
+namespace game {
 
 KeyCode MapPlatformKeyCode(int platform_key_code)
 {
@@ -310,5 +310,5 @@ int MapKeyCode(KeyCode key_code)
 	return (int)key_code;
 }
 
-} // namespace axl.gl
+} // namespace axl.game
 } // namespace axl

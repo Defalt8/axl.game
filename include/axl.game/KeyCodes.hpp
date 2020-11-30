@@ -1,7 +1,7 @@
 #pragma once
 
 namespace axl {
-namespace gl {
+namespace game {
 
 enum KeyCode
 {
@@ -152,5 +152,5 @@ enum KeyCode
 	KEY_PERIOD
 }; // enum KeyCodes
 
-} // namespace axl.gl
+} // namespace axl.game
 } // namespace axl

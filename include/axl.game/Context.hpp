@@ -2,17 +2,17 @@
 #include "lib.hpp"
 
 namespace axl {
-namespace gl {
+namespace game {
 
-class AXLGLCXXAPI View;
+class AXLGAMECXXAPI View;
 
-class AXLGLCXXAPI Context
+class AXLGAMECXXAPI Context
 {
 	public:
 		/**
 		 * OpenGL context configuration info.
 		 */
-		class AXLGLCXXAPI Config
+		class AXLGAMECXXAPI Config
 		{
 			public:
 				// OpenGL context profiles.
@@ -60,5 +60,5 @@ class AXLGLCXXAPI Context
 		Context& operator=(Context context);
 };
 
-} // namespace axl.gl
+} // namespace axl.game
 } // namespace axl

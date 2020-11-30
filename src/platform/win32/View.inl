@@ -2,12 +2,13 @@
 #include <cstdlib>
 #include "defs.h"
 #include <axl.glw/wglext.hpp>
-#include <axl.gl/View.hpp>
-#include <axl.gl/KeyMap.hpp>
+#include <axl.math/Vec2.hpp>
+#include <axl.game/View.hpp>
+#include <axl.game/KeyMap.hpp>
 #include "ViewData.hpp"
 
 namespace axl {
-namespace gl {
+namespace game {
 using namespace axl::math;
 /////////
 // View
@@ -572,12 +573,12 @@ LRESULT CALLBACK MWindowProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lpar
 						view->onKey(MapPlatformKeyCode((int)(MapVirtualKeyW(scancode, MAPVK_VSC_TO_VK_EX))), (message == WM_KEYDOWN));
 						break;
 					case VK_MENU:
-						view->onKey(axl::gl::KEY_ALT, is_down);
+						view->onKey(axl::game::KEY_ALT, is_down);
 						view->onKey(MapPlatformKeyCode((int)(extended ? VK_RMENU : VK_LMENU)), is_down);
 						break;
 					case VK_LWIN:
 					case VK_RWIN:
-						view->onKey(axl::gl::KEY_CMD, is_down);
+						view->onKey(axl::game::KEY_CMD, is_down);
 						view->onKey(MapPlatformKeyCode((int)wparam), is_down);
 						break;
 					default:
@@ -887,5 +888,5 @@ const View::Config View::Config::Null(
 	false // stereo
 );
 
-} // namespace axl.gl
+} // namespace axl.game
 } // namespace axl

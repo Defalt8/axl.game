@@ -4,9 +4,9 @@
 #include "KeyCodes.hpp"
 
 namespace axl {
-namespace gl {
+namespace game {
 
-class AXLGLCXXAPI Application 
+class AXLGAMECXXAPI Application 
 {
 	public:
 		static axl::math::Vec2<int> getCurrentDisplaySize();
@@ -26,5 +26,5 @@ class AXLGLCXXAPI Application
 		~Application();
 };
 
-} // namespace axl.gl
+} // namespace axl.game
 } // namespace axl

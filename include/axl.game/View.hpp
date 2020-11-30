@@ -6,13 +6,13 @@
 #include "Context.hpp"
 
 namespace axl {
-namespace gl {
+namespace game {
 
 /**
  * A window in Desktop platforms and NativeActivity in Android platforms.
  * Is responsible for creating and initializing a View with an OpenGL context.
  */
-class AXLGLCXXAPI View
+class AXLGAMECXXAPI View
 {
 	public:
 		constexpr static int MAX_TOUCHES = 10;
@@ -28,7 +28,7 @@ class AXLGLCXXAPI View
 		/**
 		 * OpenGL view pixel-format configuration info.
 		 */
-		class AXLGLCXXAPI Config
+		class AXLGAMECXXAPI Config
 		{
 			public:
 				enum PixelType { PT_RGB, PT_RGBA, PT_RGBA_FLOAT, PT_COLORINDEX };
@@ -121,8 +121,8 @@ class AXLGLCXXAPI View
 		View& operator=(const View& view);
 		View& operator=(View& view);
 		View& operator=(View view);
-		friend class axl::gl::Context;
+		friend class AXLGAMECXXAPI axl::game::Context;
 }; // class View
 
-} // namespace axl.gl
+} // namespace axl.game
 } // namespace axl

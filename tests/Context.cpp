@@ -4,30 +4,30 @@
 #include <ctime>
 #include "Assert.hpp"
 #include "lib.hpp"
-#include <axl.gl/Application.hpp>
-#include <axl.gl/View.hpp>
-#include <axl.gl/Context.hpp>
+#include <axl.game/Application.hpp>
+#include <axl.game/View.hpp>
+#include <axl.game/Context.hpp>
 #include <axl.glw/glw.hpp>
 #include <axl.glw/gl.hpp>
 #include <axl.math/angle.hpp>
 
-class GameView : public axl::gl::View
+class GameView : public axl::game::View
 {
 	public:
 		GameView(
 			const axl::util::WString& _title,
 			axl::math::Vec2<int> _pos,
 			axl::math::Vec2<int> _size,
-			axl::gl::View::Cursor _cursor = axl::gl::View::DefaultCursor) :
-			axl::gl::View(_title, _pos, _size, _cursor)
+			axl::game::View::Cursor _cursor = axl::game::View::DefaultCursor) :
+			axl::game::View(_title, _pos, _size, _cursor)
 		{}
 		void onDestroy(void)
 		{
-			axl::gl::Application::quit(0);
+			axl::game::Application::quit(0);
 		}
 		void onSize(int w, int h)
 		{
-			axl::gl::View::onSize(w, h);
+			axl::game::View::onSize(w, h);
 			if(context.isValid() && context.makeCurrent())
 			{
 				using namespace axl::glw::gl;
@@ -41,12 +41,12 @@ class GameView : public axl::gl::View
 			}
 		}
 	public:
-		axl::gl::Context context;
+		axl::game::Context context;
 };
 
 void terminate(void)
 {
-	axl::gl::Application::quit(0);
+	axl::game::Application::quit(0);
 	axl::glw::cleanup();
 }
 
@@ -54,15 +54,15 @@ int main(int argc, char *argv[])
 {
 	bool verbose = argc > 1 && (0 == strcmp(argv[1], "-v") || 0 == strcmp(argv[1], "--verbose"));
 	using namespace axl;
-	using namespace axl::gl;
+	using namespace axl::game;
 	using namespace axl::math;
-	printf("axl.gl - version %u.%u.%u  %s %s\n", axl::glw::lib::VERSION.major, axl::glw::lib::VERSION.minor, axl::glw::lib::VERSION.patch, libType(axl::glw::lib::LIBRARY_TYPE), buildType(axl::glw::lib::BUILD_TYPE));
+	printf("axl.game - version %u.%u.%u  %s %s\n", axl::game::lib::VERSION.major, axl::game::lib::VERSION.minor, axl::game::lib::VERSION.patch, libType(axl::game::lib::LIBRARY_TYPE), buildType(axl::game::lib::BUILD_TYPE));
 	printf("axl.util - version %u.%u.%u  %s %s\n", axl::util::lib::VERSION.major, axl::util::lib::VERSION.minor, axl::util::lib::VERSION.patch, libType(axl::util::lib::LIBRARY_TYPE), buildType(axl::util::lib::BUILD_TYPE));
 	printf("axl.math - version %u.%u.%u  %s %s\n", axl::math::lib::VERSION.major, axl::math::lib::VERSION.minor, axl::math::lib::VERSION.patch, libType(axl::math::lib::LIBRARY_TYPE), buildType(axl::math::lib::BUILD_TYPE));
 	printf("axl.glw - version %u.%u.%u  %s %s\n", axl::glw::lib::VERSION.major, axl::glw::lib::VERSION.minor, axl::glw::lib::VERSION.patch, libType(axl::glw::lib::LIBRARY_TYPE), buildType(axl::glw::lib::BUILD_TYPE));
 	puts("----------------------------------------");
 	atexit(terminate);
-	axl::math::Vec2<int> screen = axl::gl::Application::getCurrentDesktopSize();
+	axl::math::Vec2<int> screen = axl::game::Application::getCurrentDesktopSize();
 	axl::math::Vec2<int> size = {640, 480};
 	axl::math::Vec2<int> pos = (screen - size)/2;
 	GameView::Config view_configs[] =
@@ -93,10 +93,10 @@ int main(int argc, char *argv[])
 	printf("view.config.samples: %hhd\n", view.config.samples);
 	printf("view.config.double_buffered: %hhd\n", view.config.double_buffered);
 	printf("view.config.stereo: %hhd\n", view.config.stereo);
-	axl::gl::Context::Config context_configs[] = {
-		axl::gl::Context::Config(1, 0, 0, axl::gl::Context::Config::GLP_COMPATIBLITY)
+	axl::game::Context::Config context_configs[] = {
+		axl::game::Context::Config(1, 0, 0, axl::game::Context::Config::GLP_COMPATIBLITY)
 	};
-	Assertv(view.context.create(false, &view, context_configs, sizeof(context_configs)/sizeof(axl::gl::Context::Config)), verbose);
+	Assertv(view.context.create(false, &view, context_configs, sizeof(context_configs)/sizeof(axl::game::Context::Config)), verbose);
 	Assertv(view.context.isValid(), verbose);
 	printf("context.config.id: %d\n", view.context.config.id);
 	Assertv(view.context.makeCurrent(), verbose);
@@ -111,9 +111,9 @@ int main(int argc, char *argv[])
 	static std::clock_t update_clock = std::clock();
 	float angular_speed = 69.0f, theta = 0.0f, delta_time = 0.0f;
 
-	while(!axl::gl::Application::IsQuitting)
+	while(!axl::game::Application::IsQuitting)
 	{
-		if(axl::gl::Application::pollEvent()) continue;
+		if(axl::game::Application::pollEvent()) continue;
 		if(view.isValid() && !view.is_paused && view.context.makeCurrent())
 		{
 			using namespace axl::glw::gl;
@@ -134,7 +134,7 @@ int main(int argc, char *argv[])
 			view.swap();
 		}
 	}
-	axl::gl::Application::pollEvents();
+	axl::game::Application::pollEvents();
 	puts("----------------------------------------");
 	printf("# %d Failed!\n", Assert::_num_failed_tests);
 	return Assert::_num_failed_tests;

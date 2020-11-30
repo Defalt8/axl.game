@@ -3,12 +3,12 @@
 #include <windows.h>
 #include <axl.glw/glw.hpp>
 #include <axl.glw/wglext.hpp>
-#include <axl.gl/View.hpp>
-#include <axl.gl/Context.hpp>
+#include <axl.game/View.hpp>
+#include <axl.game/Context.hpp>
 #include "ViewData.hpp"
 
 namespace axl {
-namespace gl {
+namespace game {
 ////////////
 // Context
 
@@ -204,5 +204,5 @@ const Context::Config Context::Config::Null(
 	GLP_CORE // profile
 );
 
-} // namespace axl.gl
+} // namespace axl.game
 } // namespace axl

@@ -1,12 +1,12 @@
-#include <axl.gl/lib.hpp>
+#include <axl.game/lib.hpp>
 
 namespace axl {
-namespace gl {
+namespace game {
 namespace lib {
 
-const Version VERSION = { LIBAXLGL_VERSION_MAJOR, LIBAXLGL_VERSION_MINOR, LIBAXLGL_VERSION_PATCH };
+const Version VERSION = { LIBAXLGAME_VERSION_MAJOR, LIBAXLGAME_VERSION_MINOR, LIBAXLGAME_VERSION_PATCH };
 
-#if defined(AXLGL_SHARED)
+#if defined(LIBAXLGAME_SHARED)
 const LibraryType LIBRARY_TYPE = LT_SHARED;
 #else
 const LibraryType LIBRARY_TYPE = LT_STATIC;
@@ -20,6 +20,6 @@ const BuildType BUILD_TYPE = BT_RELEASE;
 const BuildType BUILD_TYPE = BT_OTHER;
 #endif
 
-} // namespace axl.gl.lib	
-} // namespace axl.gl	
+} // namespace axl.game.lib	
+} // namespace axl.game	
 } // namespace axl

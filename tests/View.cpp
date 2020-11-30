@@ -3,13 +3,13 @@
 #include <cstring>
 #include "Assert.hpp"
 #include "lib.hpp"
-#include <axl.gl/Application.hpp>
-#include <axl.gl/View.hpp>
-#include <axl.gl/KeyCodes.hpp>
+#include <axl.game/Application.hpp>
+#include <axl.game/View.hpp>
+#include <axl.game/KeyCodes.hpp>
 
-const char* CStrKeyCode(axl::gl::KeyCode key_code)
+const char* CStrKeyCode(axl::game::KeyCode key_code)
 {
-	using namespace axl::gl;
+	using namespace axl::game;
 	switch (key_code)
 	{
 		case KEY_LBUTTON: return "KEY_LBUTTON";
@@ -161,64 +161,64 @@ const char* CStrKeyCode(axl::gl::KeyCode key_code)
 
 bool printing_one_liner = false;
 
-class MyView : public axl::gl::View
+class MyView : public axl::game::View
 {
 		bool capture_on_click;
 	public:
 		MyView(const axl::util::WString& title_, const axl::math::Vec2<int>& position_, const axl::math::Vec2<int>& size_, const Cursor& cursor_ = View::DefaultCursor) :
-			axl::gl::View(title_, position_, size_, cursor_),
+			axl::game::View(title_, position_, size_, cursor_),
 			capture_on_click(false)
 		{}
 		bool onCreate()
 		{
 			printf("Event.onCreate\n");
-			return axl::gl::View::onCreate();
+			return axl::game::View::onCreate();
 		}
 		void onDestroy()
 		{
 			if(printing_one_liner) putchar('\n');
 			printing_one_liner = false;
 			printf("Event.onDestroy\n");
-			axl::gl::Application::quit(0);
-			axl::gl::View::onDestroy();
+			axl::game::Application::quit(0);
+			axl::game::View::onDestroy();
 		}
 		void onMove(int x, int y)
 		{
-			axl::gl::View::onMove(x, y);
+			axl::game::View::onMove(x, y);
 			if(printing_one_liner) putchar('\n');
 			printing_one_liner = false;
 			printf("Event.onMove: %4d, %4d\n", x, y);
 		}
 		void onSize(int w, int h)
 		{
-			axl::gl::View::onSize(w, h);
+			axl::game::View::onSize(w, h);
 			if(printing_one_liner) putchar('\n');
 			printing_one_liner = false;
 			printf("Event.onSize: %4d, %4d\n", w, h);
 		}
 		void onPause(void)
 		{
-			axl::gl::View::onPause();
+			axl::game::View::onPause();
 			if(printing_one_liner) putchar('\n');
 			printing_one_liner = false;
 			printf("Event.onPause\n");
 		}
 		void onResume(void)
 		{
-			axl::gl::View::onResume();
+			axl::game::View::onResume();
 			if(printing_one_liner) putchar('\n');
 			printing_one_liner = false;
 			printf("Event.onResume\n");
 		}
-		void onKey(axl::gl::KeyCode key_code, bool is_down)
+		void onKey(axl::game::KeyCode key_code, bool is_down)
 		{
-			axl::gl::View::onKey(key_code, is_down);
+			axl::game::View::onKey(key_code, is_down);
 			if(printing_one_liner) putchar('\n');
 			printing_one_liner = false;
 			printf("Event.onKey: %3d - %s - %s\n", key_code, CStrKeyCode(key_code), (is_down ? "Down" : "Up"));
 			if(is_down)
 			{
-				using namespace axl::gl;
+				using namespace axl::game;
 				switch (key_code)
 				{
 					case KEY_ESCAPE:
@@ -279,9 +279,9 @@ int main(int argc, char *argv[])
 {
 	bool verbose = argc > 1 && (0 == strcmp(argv[1], "-v") || 0 == strcmp(argv[1], "--verbose"));
 	using namespace axl;
-	using namespace axl::gl;
+	using namespace axl::game;
 	using namespace axl::math;
-	printf("axl.gl - version %u.%u.%u  %s %s\n", axl::glw::lib::VERSION.major, axl::glw::lib::VERSION.minor, axl::glw::lib::VERSION.patch, libType(axl::glw::lib::LIBRARY_TYPE), buildType(axl::glw::lib::BUILD_TYPE));
+	printf("axl.game - version %u.%u.%u  %s %s\n", axl::game::lib::VERSION.major, axl::game::lib::VERSION.minor, axl::game::lib::VERSION.patch, libType(axl::game::lib::LIBRARY_TYPE), buildType(axl::game::lib::BUILD_TYPE));
 	printf("axl.util - version %u.%u.%u  %s %s\n", axl::util::lib::VERSION.major, axl::util::lib::VERSION.minor, axl::util::lib::VERSION.patch, libType(axl::util::lib::LIBRARY_TYPE), buildType(axl::util::lib::BUILD_TYPE));
 	printf("axl.math - version %u.%u.%u  %s %s\n", axl::math::lib::VERSION.major, axl::math::lib::VERSION.minor, axl::math::lib::VERSION.patch, libType(axl::math::lib::LIBRARY_TYPE), buildType(axl::math::lib::BUILD_TYPE));
 	printf("axl.glw - version %u.%u.%u  %s %s\n", axl::glw::lib::VERSION.major, axl::glw::lib::VERSION.minor, axl::glw::lib::VERSION.patch, libType(axl::glw::lib::LIBRARY_TYPE), buildType(axl::glw::lib::BUILD_TYPE));

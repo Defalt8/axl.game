@@ -3,7 +3,7 @@
 #include <windows.h>
 
 namespace axl {
-namespace gl {
+namespace game {
 
 typedef struct
 {
@@ -18,5 +18,5 @@ typedef struct
 	DWORD style;
 } ViewData;
 
-} // namespace axl.gl
+} // namespace axl.game
 } // namespace axl

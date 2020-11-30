@@ -1,12 +1,12 @@
 #pragma once
-#include <axl.gl/lib.hpp>
+#include <axl.game/lib.hpp>
 #include <axl.util/lib.hpp>
 #include <axl.math/lib.hpp>
 #include <axl.glw/lib.hpp>
 
-const char* libType(axl::gl::lib::LibraryType lib_type)
+const char* libType(axl::game::lib::LibraryType lib_type)
 {
-	using namespace axl::gl::lib;
+	using namespace axl::game::lib;
 	switch (lib_type)
 	{
 		case LT_SHARED: return "SHARED";
@@ -15,9 +15,9 @@ const char* libType(axl::gl::lib::LibraryType lib_type)
 	}
 }
 
-const char* buildType(axl::gl::lib::BuildType build_type)
+const char* buildType(axl::game::lib::BuildType build_type)
 {
-	using namespace axl::gl::lib;
+	using namespace axl::game::lib;
 	switch (build_type)
 	{
 		case BT_DEBUG: return "Debug";
