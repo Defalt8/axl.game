@@ -9,7 +9,7 @@ A simple multiplatform C++ and OpenGL based game library.
 
 ## Library Headers
 
-- [axl.game/lib.hpp](/include/axl.game/lib.hpp) - The library header. Contains library version.
+- [axl.game/lib.hpp](/include/axl.game/lib.hpp) - The library header. Contains **library version**, **library type** and **build type**.
 - [axl.game/Application.hpp](/include/axl.game/Application.hpp) - Application class containing static methods to control the app.
 - [axl.game/KeyCodes.hpp](/include/axl.game/KeyCodes.hpp) - General KeyCodes enumerations.
 - [axl.game/KeyMap.hpp](/include/axl.game/KeyMap.hpp) - Contains functions to map key codes from library to platform specific and vise versa.
