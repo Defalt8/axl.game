@@ -68,7 +68,7 @@ bool View::isValid() const
 	return (m_reserved && ((ViewData*)m_reserved)->hwnd && ((ViewData*)m_reserved)->hdc);
 }
 
-bool View::create(bool recreate, const Config* configs_, int configs_count_)
+bool View::create(bool recreate, const Config* configs_, int configs_count_, Flags view_flags)
 {
 	if(!_cursors_loaded) // load cursors
 	{
@@ -86,6 +86,7 @@ bool View::create(bool recreate, const Config* configs_, int configs_count_)
 	if(!m_reserved) m_reserved = (void*)calloc(1, sizeof(ViewData));
 	if(m_reserved)
 	{
+		((ViewData*)m_reserved)->is_recreating = recreate;
 		if(!recreate)
 		{
 			if(((ViewData*)m_reserved)->hwnd && ((ViewData*)m_reserved)->hdc) return true;
@@ -101,23 +102,43 @@ bool View::create(bool recreate, const Config* configs_, int configs_count_)
 			{
 				ReleaseDC(((ViewData*)m_reserved)->hwnd, ((ViewData*)m_reserved)->hdc);
 				DestroyWindow(((ViewData*)m_reserved)->hwnd);
+				((ViewData*)m_reserved)->hwnd = NULL;
+				((ViewData*)m_reserved)->hdc = NULL;
 			}
 		}
 		axl::util::WString class_name(L"AXL.GLW.VIEW.");
 		class_name += m_title.substring(12);
-		DWORD style = WS_OVERLAPPEDWINDOW;
+		DWORD style = 0;
+		switch(view_flags)
+		{
+			default:
+			case VF_FIXED:
+				style = WS_OVERLAPPED|WS_SYSMENU|WS_MINIMIZEBOX|WS_BORDER|WS_CAPTION;
+				break;
+			case VF_RESIZABLE:
+				style = WS_OVERLAPPEDWINDOW|WS_BORDER;
+				break;
+			case VF_POPUP:
+				style = WS_POPUP;
+				break;
+		}
 		HINSTANCE hinst = (HINSTANCE)GetModuleHandleW(0);
 		HWND hwnd = NULL;
 		HDC hdc = NULL;
 		WNDCLASSEXW wc;
-		ZeroMemory(&wc, sizeof(WNDCLASSEXW));
-		wc.cbSize = sizeof(WNDCLASSEXW);
-		wc.hInstance = hinst;
-		wc.lpszClassName = class_name.cwstr();
-		wc.style = CS_OWNDC;
-		wc.lpfnWndProc = MWindowProc;
-		wc.hbrBackground = (HBRUSH)_hbrush_black;
-		if(RegisterClassExW(&wc))
+		bool registered = FALSE != GetClassInfoExW(hinst, class_name.cwstr(), &wc);
+		if(!registered)
+		{
+			ZeroMemory(&wc, sizeof(WNDCLASSEXW));
+			wc.cbSize = sizeof(WNDCLASSEXW);
+			wc.hInstance = hinst;
+			wc.lpszClassName = class_name.cwstr();
+			wc.style = CS_OWNDC|CS_HREDRAW|CS_VREDRAW;
+			wc.lpfnWndProc = MWindowProc;
+			wc.hbrBackground = (HBRUSH)_hbrush_black;
+			registered = FALSE != RegisterClassExW(&wc);
+		}
+		if(registered)
 		{
 			RECT rc = {0, 0, m_size.x, m_size.y};
 			AdjustWindowRect(&rc, style, FALSE);
@@ -127,9 +148,9 @@ bool View::create(bool recreate, const Config* configs_, int configs_count_)
 			{
 				SetWindowLongPtrW(hwnd, GWLP_USERDATA, (LONG_PTR)this);
 				hdc = GetDC(hwnd);
-				SendMessageW(hwnd, WM_USER+1, 0, (LPARAM)this);
 			}
 		}
+		else return false;
 		((ViewData*)m_reserved)->hinst = hinst;
 		((ViewData*)m_reserved)->hwnd = hwnd;
 		((ViewData*)m_reserved)->hdc = hdc;
@@ -145,6 +166,7 @@ bool View::create(bool recreate, const Config* configs_, int configs_count_)
 			{
 				SendMessageW(((ViewData*)m_reserved)->hwnd, WM_SETICON, (WPARAM)ICON_BIG, (LPARAM)((ViewData*)m_reserved)->hicon_big);
 			}
+			((ViewData*)m_reserved)->is_recreating = false;
 		}
 		if(isValid())
 		{
@@ -197,7 +219,7 @@ bool View::create(bool recreate, const Config* configs_, int configs_count_)
 						if(num_formats > 0)
 						{
 							PIXELFORMATDESCRIPTOR pfd;
-							for(int i=0; i<num_formats; ++i)
+							for(UINT i=0; i<num_formats; ++i)
 							{
 								DescribePixelFormat(hdc, formats[i], sizeof(pfd), &pfd);
 								if(FALSE != (set = SetPixelFormat(hdc, formats[i], &pfd))) break;
@@ -219,7 +241,7 @@ bool View::create(bool recreate, const Config* configs_, int configs_count_)
 					ZeroMemory(&pfd, sizeof(PIXELFORMATDESCRIPTOR));
 					pfd.nSize = sizeof(PIXELFORMATDESCRIPTOR);
 					pfd.nVersion = 1;
-					pfd.dwFlags = PFD_GENERIC_ACCELERATED|PFD_SUPPORT_OPENGL|PFD_DRAW_TO_WINDOW|(!config->double_buffered?0:PFD_DOUBLEBUFFER)|(!config->stereo?0:PFD_STEREO);
+					pfd.dwFlags = PFD_SUPPORT_OPENGL|PFD_DRAW_TO_WINDOW|PFD_SUPPORT_COMPOSITION|(!config->double_buffered?0:PFD_DOUBLEBUFFER)|(!config->stereo?0:PFD_STEREO);
 					pfd.iPixelType = pixel_type;
 					pfd.cColorBits = config->bits_color;
 					pfd.cRedBits = config->bits_red;
@@ -241,6 +263,9 @@ bool View::create(bool recreate, const Config* configs_, int configs_count_)
 					break;
 				}
 			}
+			if(set == FALSE)
+				m_config = Config::Default;
+			SendMessageW(hwnd, WM_USER+1, 0, (LPARAM)this);
 			return set != FALSE;
 		}
 	}
@@ -251,9 +276,15 @@ void View::destroy()
 {
 	if(m_reserved && ((ViewData*)m_reserved)->hwnd)
 	{
+		((ViewData*)m_reserved)->is_recreating = false;
 		ReleaseDC(((ViewData*)m_reserved)->hwnd, ((ViewData*)m_reserved)->hdc);
 		DestroyWindow(((ViewData*)m_reserved)->hwnd);
 	}
+}
+
+const void* View::getReserved() const
+{
+	return this->reserved;
 }
 
 void View::cleanup()
@@ -412,7 +443,6 @@ bool View::show(ShowMode show_mode)
 			switch(m_visiblity)
 			{
 				case View::VS_HIDDEN:
-					return true;
 				case View::VS_SHOWN:
 				case View::VS_FULLSCREEN:
 					ShowWindow(((ViewData*)m_reserved)->hwnd, SW_HIDE);
@@ -421,13 +451,18 @@ bool View::show(ShowMode show_mode)
 			m_visiblity = View::VS_HIDDEN;
 			break;
 		case View::SM_SHOW:
+			if(((ViewData*)m_reserved)->style & WS_POPUP)
+			{
+				this->onSize(m_size.x, m_size.y);
+			}
 			switch(m_visiblity)
 			{
 				case View::VS_HIDDEN:
 					ShowWindow(((ViewData*)m_reserved)->hwnd, SW_NORMAL);
 					break;
 				case View::VS_SHOWN:
-					return true;
+					ShowWindow(((ViewData*)m_reserved)->hwnd, SW_NORMAL);
+					break;
 				case View::VS_FULLSCREEN:
 					{
 						// restore the style and size
@@ -493,7 +528,7 @@ bool View::onCreate()
 	return true;
 }
 
-void View::onDestroy()
+void View::onDestroy(bool recreating)
 {
 	m_is_paused = false;
 }
@@ -545,7 +580,7 @@ LRESULT CALLBACK MWindowProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lpar
 	UINT scancode = (lparam & 0x00ff0000) >> 16;
     int extended  = (lparam & 0x01000000) != 0;
 	static int bottom_index = 0;
-	static int ids[View::MAX_TOUCHES];// = {-1};//,-1,-1,-1,-1,-1,-1,-1,-1,-1};
+	static int ids[View::MAX_TOUCHES];
 	static bool init_ids = false;
 	if(!init_ids)
 	{
@@ -555,6 +590,8 @@ LRESULT CALLBACK MWindowProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lpar
 	}
 	switch (message)
 	{
+		case WM_PAINT:
+			return 0;
 		case WM_SYSKEYDOWN:
 		case WM_SYSKEYUP:
 		case WM_KEYDOWN:
@@ -742,7 +779,7 @@ LRESULT CALLBACK MWindowProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lpar
 		case WM_DESTROY:
 			if(view && view->isValid())
 			{
-				view->onDestroy();
+				view->onDestroy(((ViewData*)view->getReserved())->is_recreating);
 			}
 			break;
 		default:

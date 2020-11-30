@@ -16,6 +16,7 @@ typedef struct
 	HCURSOR hcursor_custom;
 	RECT prev_rect;
 	DWORD style;
+	bool is_recreating;
 } ViewData;
 
 } // namespace axl.game
