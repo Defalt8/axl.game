@@ -120,10 +120,7 @@ class AXLGAMECXXAPI View
 		static View::Cursor DefaultCursor;
 	private:
 		View(const View& view);
-		View(View& view);
 		View& operator=(const View& view);
-		View& operator=(View& view);
-		View& operator=(View view);
 		friend class AXLGAMECXXAPI axl::game::Context;
 }; // class View
 

@@ -54,10 +54,7 @@ class AXLGAMECXXAPI Context
 		void *m_reserved;
 	private:
 		Context(const Context& context);
-		Context(Context& context);
 		Context& operator=(const Context& context);
-		Context& operator=(Context& context);
-		Context& operator=(Context context);
 };
 
 } // namespace axl.game
