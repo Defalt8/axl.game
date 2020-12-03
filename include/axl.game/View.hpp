@@ -15,8 +15,8 @@ namespace game {
 class AXLGAMECXXAPI View
 {
 	public:
-		constexpr static int MAX_TOUCHES = 10;
-		constexpr static int MAX_POINTERS = MAX_TOUCHES + 2;
+		const static int MAX_TOUCHES = 10;
+		const static int MAX_POINTERS = MAX_TOUCHES + 2; // don't change
 		// View creation flags
 		enum Flags { VF_FIXED, VF_RESIZABLE, VF_POPUP };
 		// A mouse or other pointer's buttons.
@@ -68,23 +68,23 @@ class AXLGAMECXXAPI View
 	public:
 		View(const axl::util::WString& title, const axl::math::Vec2i& position, const axl::math::Vec2i& size, const Cursor& cursor = View::DefaultCursor);
 		virtual ~View();
-		bool isValid() const;
-		bool create(bool recreate = false, const Config* configs = (const Config*)0, int configs_count = 0, Flags flags = VF_FIXED);
-		void destroy();
+		virtual bool isValid() const;
+		virtual bool create(bool recreate = false, const Config* configs = (const Config*)0, int configs_count = 0, Flags flags = VF_FIXED);
+		virtual void destroy();
 		const void* getReserved() const;
 		static void cleanup();
-		bool setPosition(const axl::math::Vec2i& position);
-		bool setSize(const axl::math::Vec2i& size);
-		bool setTitle(const axl::util::WString& title);
-		bool setCursor(const Cursor& cursor);
-		bool setCursorFromResource(int res_id);
-		bool setIcon(const axl::util::WString& icon_file);
-		bool setIconFromResource(int res_id);
-		bool isPointerCaptured() const;
-		bool capturePointer(bool capture) const;
-		bool show(ShowMode show_mode = SM_SHOW);
-		bool setCursorPosition(const axl::math::Vec2i& cursor_position);
-		bool swap() const;
+		virtual bool setPosition(const axl::math::Vec2i& position);
+		virtual bool setSize(const axl::math::Vec2i& size);
+		virtual bool setTitle(const axl::util::WString& title);
+		virtual bool setCursor(const Cursor& cursor);
+		virtual bool setCursorFromResource(int res_id);
+		virtual bool setIcon(const axl::util::WString& icon_file);
+		virtual bool setIconFromResource(int res_id);
+		virtual bool isPointerCaptured() const;
+		virtual bool capturePointer(bool capture) const;
+		virtual bool show(ShowMode show_mode = SM_SHOW);
+		virtual bool setCursorPosition(const axl::math::Vec2i& cursor_position);
+		virtual bool swap() const;
 	public: // Event callback methods
 		virtual bool onCreate(bool recreating = false);
 		virtual void onDestroy(bool recreating = false);
