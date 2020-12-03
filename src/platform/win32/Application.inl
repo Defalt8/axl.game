@@ -11,21 +11,21 @@ DisplaySetting::DisplaySetting(int bits_per_pixel, int width, int height, int fr
 	bits_per_pixel(bits_per_pixel), width(width), height(height), frequency(frequency), rotation(rotation)
 {}
 
-Vec2<int> Application::getCurrentDisplaySize()
+Vec2i Application::getCurrentDisplaySize()
 {
-	return Vec2<int>(GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN));
+	return Vec2i(GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN));
 }
 
-Vec2<int> Application::getCurrentDesktopSize()
+Vec2i Application::getCurrentDesktopSize()
 {
-	return Vec2<int>(GetSystemMetrics(SM_CXFULLSCREEN), GetSystemMetrics(SM_CYFULLSCREEN));
+	return Vec2i(GetSystemMetrics(SM_CXFULLSCREEN), GetSystemMetrics(SM_CYFULLSCREEN));
 }
 
-Vec2<int> Application::getCursorPosition()
+Vec2i Application::getCursorPosition()
 {
 	POINT cpos = {-1,-1};
 	GetCursorPos(&cpos);
-	return Vec2<int>(cpos.x, cpos.y);
+	return Vec2i(cpos.x, cpos.y);
 }
 
 bool Application::enumDisplaySettings(DisplaySetting* display_setting, int i)
@@ -34,6 +34,7 @@ bool Application::enumDisplaySettings(DisplaySetting* display_setting, int i)
 	DEVMODEW devmode, prev_devmode;
 	ZeroMemory(&devmode, sizeof(DEVMODEW));
 	devmode.dmSize = sizeof(DEVMODEW);
+	prev_devmode = devmode;
 	if(i == DisplaySetting::IP_CURRENT || i == DisplaySetting::IP_DEFAULT)
 	{
 		if(EnumDisplaySettingsW(NULL, (i == DisplaySetting::IP_DEFAULT ? ENUM_REGISTRY_SETTINGS : ENUM_CURRENT_SETTINGS), &devmode))
@@ -119,7 +120,7 @@ bool Application::restoreDisplaySettings()
 		axl::game::Application::setDisplaySettings(Default) )
 		return true;
 	// last resort display size restore
-	axl::math::Vec2<int> display_size = axl::game::Application::getCurrentDisplaySize();
+	axl::math::Vec2i display_size = axl::game::Application::getCurrentDisplaySize();
 	Default.width = display_size.x;
 	Default.height = display_size.y;
 	return axl::game::Application::setDisplaySettings(Default);
@@ -130,7 +131,7 @@ bool Application::setCursorPosition(int x, int y)
 	return SetCursorPos(x, y) != FALSE;
 }
 
-bool Application::setCursorPosition(const Vec2<int>& cur_pos)
+bool Application::setCursorPosition(const Vec2i& cur_pos)
 {
 	return SetCursorPos(cur_pos.x, cur_pos.y) != FALSE;
 }
@@ -149,10 +150,10 @@ void Application::quit(int exit_code)
 bool Application::pollEvent()
 {
 	MSG message;
-	if(PeekMessage(&message, NULL, 0, 0, PM_REMOVE))
+	if(FALSE != PeekMessageW(&message, NULL, 0, 0, PM_REMOVE))
 	{
 		TranslateMessage(&message);
-		DispatchMessage(&message);
+		DispatchMessageW(&message);
 		return true;
 	}
 	return false;
@@ -161,20 +162,20 @@ bool Application::pollEvent()
 void Application::pollEvents()
 {
 	MSG message;
-	while(PeekMessage(&message, NULL, 0, 0, PM_REMOVE))
+	while(FALSE != PeekMessageW(&message, NULL, 0, 0, PM_REMOVE))
 	{
 		TranslateMessage(&message);
-		DispatchMessage(&message);
+		DispatchMessageW(&message);
 	}
 }
 
 void Application::loopEvents()
 {
 	MSG message;
-	while(GetMessage(&message, NULL, 0, 0))
+	while(FALSE != GetMessageW(&message, NULL, 0, 0))
 	{
 		TranslateMessage(&message);
-		DispatchMessage(&message);
+		DispatchMessageW(&message);
 	}
 }
 

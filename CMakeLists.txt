@@ -1,6 +1,6 @@
 cmake_minimum_required( VERSION 3.17 )
 
-project( axl.game VERSION 0.8.30 DESCRIPTION "A simple C++ OpenGL graphics library." )
+project( axl.game VERSION 0.9.31 DESCRIPTION "A simple C++ OpenGL graphics library." )
 
 # Configure
 set( LIBAXLGAME_SUFFIX "" )

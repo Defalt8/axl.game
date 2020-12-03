@@ -17,7 +17,7 @@ int main(int argc, char *argv[])
 	printf("axl.math - version %u.%u.%u  %s %s\n", axl::math::lib::VERSION.major, axl::math::lib::VERSION.minor, axl::math::lib::VERSION.patch, libType(axl::math::lib::LIBRARY_TYPE), buildType(axl::math::lib::BUILD_TYPE));
 	printf("axl.glw - version %u.%u.%u  %s %s\n", axl::glw::lib::VERSION.major, axl::glw::lib::VERSION.minor, axl::glw::lib::VERSION.patch, libType(axl::glw::lib::LIBRARY_TYPE), buildType(axl::glw::lib::BUILD_TYPE));
 	puts("----------------------------------------");
-	Vec2<int> display_size, pointer_position;
+	Vec2i display_size, pointer_position;
 	display_size = Application::getCurrentDisplaySize();
 	printf("display_size: (%dx%d)\n", display_size.x, display_size.y);
 	Assertv(display_size.x == GetSystemMetrics(SM_CXSCREEN), verbose);

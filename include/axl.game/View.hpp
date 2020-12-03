@@ -1,5 +1,5 @@
 #pragma once
-#include <axl.math/Vec2.hpp>
+#include <axl.math/vec/Vec2i.hpp>
 #include <axl.util/WString.hpp>
 #include "lib.hpp"
 #include "KeyCodes.hpp"
@@ -66,15 +66,15 @@ class AXLGAMECXXAPI View
 				static const Config Null;
 		};
 	public:
-		View(const axl::util::WString& title, const axl::math::Vec2<int>& position, const axl::math::Vec2<int>& size, const Cursor& cursor = View::DefaultCursor);
+		View(const axl::util::WString& title, const axl::math::Vec2i& position, const axl::math::Vec2i& size, const Cursor& cursor = View::DefaultCursor);
 		virtual ~View();
 		bool isValid() const;
 		bool create(bool recreate = false, const Config* configs = (const Config*)0, int configs_count = 0, Flags flags = VF_FIXED);
 		void destroy();
 		const void* getReserved() const;
 		static void cleanup();
-		bool setPosition(const axl::math::Vec2<int>& position);
-		bool setSize(const axl::math::Vec2<int>& size);
+		bool setPosition(const axl::math::Vec2i& position);
+		bool setSize(const axl::math::Vec2i& size);
 		bool setTitle(const axl::util::WString& title);
 		bool setCursor(const Cursor& cursor);
 		bool setCursorFromResource(int res_id);
@@ -83,10 +83,10 @@ class AXLGAMECXXAPI View
 		bool isPointerCaptured() const;
 		bool capturePointer(bool capture) const;
 		bool show(ShowMode show_mode = SM_SHOW);
-		bool setCursorPosition(const axl::math::Vec2<int>& cursor_position);
+		bool setCursorPosition(const axl::math::Vec2i& cursor_position);
 		bool swap() const;
 	public: // Event callback methods
-		virtual bool onCreate();
+		virtual bool onCreate(bool recreating = false);
 		virtual void onDestroy(bool recreating = false);
 		virtual void onMove(int x, int y);
 		virtual void onSize(int w, int h);
@@ -97,8 +97,8 @@ class AXLGAMECXXAPI View
 		virtual void onPointer(int index, int x, int y, bool is_down);
 		virtual void onPointerMove(int index, int x, int y);
 	public:
-		const axl::math::Vec2<int>& position;
-		const axl::math::Vec2<int>& size;
+		const axl::math::Vec2i& position;
+		const axl::math::Vec2i& size;
 		const axl::util::WString& title;
 		const View::Config& config;
 		const View::Cursor& cursor;
@@ -107,8 +107,8 @@ class AXLGAMECXXAPI View
 		const bool*const pointers;
 		void *const& reserved;
 	private:
-		axl::math::Vec2<int> m_position;
-		axl::math::Vec2<int> m_size;
+		axl::math::Vec2i m_position;
+		axl::math::Vec2i m_size;
 		axl::util::WString m_title;
 		View::Config m_config;
 		View::Cursor m_cursor;

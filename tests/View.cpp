@@ -165,22 +165,22 @@ class MyView : public axl::game::View
 {
 		bool capture_on_click;
 	public:
-		MyView(const axl::util::WString& title_, const axl::math::Vec2<int>& position_, const axl::math::Vec2<int>& size_, const Cursor& cursor_ = View::DefaultCursor) :
+		MyView(const axl::util::WString& title_, const axl::math::Vec2i& position_, const axl::math::Vec2i& size_, const Cursor& cursor_ = View::DefaultCursor) :
 			axl::game::View(title_, position_, size_, cursor_),
 			capture_on_click(false)
 		{}
-		bool onCreate()
+		bool onCreate(bool recreating)
 		{
 			printf("Event.onCreate\n");
-			return axl::game::View::onCreate();
+			return axl::game::View::onCreate(recreating);
 		}
-		void onDestroy()
+		void onDestroy(bool recreating)
 		{
 			if(printing_one_liner) putchar('\n');
 			printing_one_liner = false;
 			printf("Event.onDestroy\n");
+			axl::game::View::onDestroy(recreating);
 			axl::game::Application::quit(0);
-			axl::game::View::onDestroy();
 		}
 		void onMove(int x, int y)
 		{
@@ -267,7 +267,7 @@ class MyView : public axl::game::View
 			else
 				printf("\rEvent.onPointerMove: [%d]-> x(%4d) y(%4d)", index, x, y);
 		}
-		axl::math::Vec2<int> touch1, touch2;
+		axl::math::Vec2i touch1, touch2;
 };
 
 void terminating()
@@ -287,10 +287,15 @@ int main(int argc, char *argv[])
 	printf("axl.glw - version %u.%u.%u  %s %s\n", axl::glw::lib::VERSION.major, axl::glw::lib::VERSION.minor, axl::glw::lib::VERSION.patch, libType(axl::glw::lib::LIBRARY_TYPE), buildType(axl::glw::lib::BUILD_TYPE));
 	puts("----------------------------------------");
 	std::atexit(terminating);
-	Vec2<int> screen = Application::getCurrentDesktopSize(), size(640, 480);
+	Vec2i screen = Application::getCurrentDesktopSize(), size(640, 480);
 	MyView view(L"My View", (screen - size)/2, size);
 	view.setCursor(View::CUR_HAND);
-	Assertv(view.setIcon(L"resources/icons/axl.ico"), verbose);
+	FILE* icon_file = std::fopen("resources/icons/axl.ico", "rb");
+	if(icon_file)
+	{
+		std::fclose(icon_file);
+		Assertv(view.setIcon(L"resources/icons/axl.ico"), verbose);
+	}
 	Assertv(view.create(), verbose);
 	printf("view.config.id: %ld\n", view.config.id);
 	printf("view.config.pixel_type: %s\n", (view.config.pixel_type==View::Config::PT_RGB?"RGB":(view.config.pixel_type==View::Config::PT_RGBA?"RGBA":view.config.pixel_type==View::Config::PT_RGBA_FLOAT?"RGBA_FLOAT":view.config.pixel_type==View::Config::PT_COLORINDEX?"Colorindex":"Unknown")));
@@ -313,7 +318,7 @@ int main(int argc, char *argv[])
 	Assertv(view.setTitle(L"View"), verbose);
 	Assertv(0 == wcscmp(view.title.cwstr(), L"View"), verbose);
 	Assertv(view.position == (screen-size)/2, verbose);
-	Assertv(view.size == Vec2<int>(640,480), verbose);
+	Assertv(view.size == Vec2i(640,480), verbose);
 	Assertv(view.visiblity == View::VS_HIDDEN, verbose);
 	Assertv(view.cursor == View::CUR_HAND, verbose);
 	Assertv(view.config == View::Config::Default, verbose);

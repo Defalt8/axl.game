@@ -16,13 +16,14 @@ class GameView : public axl::game::View
 	public:
 		GameView(
 			const axl::util::WString& _title,
-			axl::math::Vec2<int> _pos,
-			axl::math::Vec2<int> _size,
+			axl::math::Vec2i _pos,
+			axl::math::Vec2i _size,
 			axl::game::View::Cursor _cursor = axl::game::View::DefaultCursor) :
 			axl::game::View(_title, _pos, _size, _cursor)
 		{}
-		void onDestroy(void)
+		void onDestroy(bool recreating)
 		{
+			axl::game::View::onDestroy(recreating);
 			axl::game::Application::quit(0);
 		}
 		void onSize(int w, int h)
@@ -62,9 +63,9 @@ int main(int argc, char *argv[])
 	printf("axl.glw - version %u.%u.%u  %s %s\n", axl::glw::lib::VERSION.major, axl::glw::lib::VERSION.minor, axl::glw::lib::VERSION.patch, libType(axl::glw::lib::LIBRARY_TYPE), buildType(axl::glw::lib::BUILD_TYPE));
 	puts("----------------------------------------");
 	atexit(terminate);
-	axl::math::Vec2<int> screen = axl::game::Application::getCurrentDesktopSize();
-	axl::math::Vec2<int> size = {640, 480};
-	axl::math::Vec2<int> pos = (screen - size)/2;
+	axl::math::Vec2i screen = axl::game::Application::getCurrentDesktopSize();
+	axl::math::Vec2i size = {640, 480};
+	axl::math::Vec2i pos = (screen - size)/2;
 	GameView::Config view_configs[] =
 	{
 		GameView::Config(1, GameView::Config::PT_RGBA, 32,8,8,8,8, 24,8, 0,0,0,0,0, 16, true, false),
@@ -73,7 +74,12 @@ int main(int argc, char *argv[])
 		GameView::Config(4, GameView::Config::PT_RGBA, 32,8,8,8,8, 24,8, 0,0,0,0,0, 0, true, false)
 	};
 	GameView view(L"Context Test", pos, size, GameView::CUR_CROSS);
-	Assertv(view.setIcon(L"Resources/Icons/axl.ico"), verbose);
+	FILE* icon_file = std::fopen("resources/icons/axl.ico", "rb");
+	if(icon_file)
+	{
+		std::fclose(icon_file);
+		Assertv(view.setIcon(L"resources/icons/axl.ico"), verbose);
+	}
 	Assertv(view.create(true, view_configs, sizeof(view_configs)/sizeof(GameView::Config)), verbose);
 	Assertv(view.isValid(), verbose);
 	printf("view.config.id: %ld\n", view.config.id);
@@ -131,6 +137,10 @@ int main(int argc, char *argv[])
 				glVertex2d( 0.5,-0.5);
 				glVertex2d( 0.0, 0.5);
 			glEnd();
+			float blur_factor = 0.875f;
+			glAccum(GL_MULT, blur_factor);
+			glAccum(GL_ACCUM, 1.0f - blur_factor);
+			glAccum(GL_RETURN, 1.0f);
 			view.swap();
 		}
 	}

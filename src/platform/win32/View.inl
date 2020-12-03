@@ -2,7 +2,7 @@
 #include <cstdlib>
 #include "defs.h"
 #include <axl.glw/wglext.hpp>
-#include <axl.math/Vec2.hpp>
+#include <axl.math/vec/Vec2i.hpp>
 #include <axl.game/View.hpp>
 #include <axl.game/KeyMap.hpp>
 #include "ViewData.hpp"
@@ -25,7 +25,7 @@ static HBRUSH _hbrush_black = NULL;
 
 LRESULT CALLBACK MWindowProc(HWND, UINT, WPARAM, LPARAM);
 
-View::View(const axl::util::WString& title_, const axl::math::Vec2<int>& position_, const axl::math::Vec2<int>& size_, const Cursor& cursor_) :
+View::View(const axl::util::WString& title_, const axl::math::Vec2i& position_, const axl::math::Vec2i& size_, const Cursor& cursor_) :
 	position(m_position),
 	size(m_size),
 	title(m_title),
@@ -109,7 +109,8 @@ bool View::create(bool recreate, const Config* configs_, int configs_count_, Fla
 		axl::util::WString class_name(L"AXL.GLW.VIEW.");
 		class_name += m_title.substring(12);
 		DWORD style = 0;
-		switch(view_flags)
+		int view_type = view_flags & 0x3;
+		switch(view_type)
 		{
 			default:
 			case VF_FIXED:
@@ -297,7 +298,7 @@ void View::cleanup()
 	axl::glw::wglext::cleanup();
 }
 
-bool View::setPosition(const axl::math::Vec2<int>& position_)
+bool View::setPosition(const axl::math::Vec2i& position_)
 {
 	if(!m_reserved) return false;
 	if(SetWindowPos(((ViewData*)m_reserved)->hwnd, NULL, position_.x, position_.y, 0, 0, SWP_NOSIZE|SWP_NOREDRAW|SWP_NOZORDER) != FALSE)
@@ -308,7 +309,7 @@ bool View::setPosition(const axl::math::Vec2<int>& position_)
 	return false;
 }
 
-bool View::setSize(const axl::math::Vec2<int>& size_)
+bool View::setSize(const axl::math::Vec2i& size_)
 {
 	if(!m_reserved) return false;
 	if(SetWindowPos(((ViewData*)m_reserved)->hwnd, NULL, 0, 0, size_.x, size_.y, SWP_NOMOVE|SWP_FRAMECHANGED|SWP_NOZORDER) != FALSE)
@@ -508,7 +509,7 @@ bool View::show(ShowMode show_mode)
 	return true;
 }
 
-bool View::setCursorPosition(const axl::math::Vec2<int>& pointer_position)
+bool View::setCursorPosition(const axl::math::Vec2i& pointer_position)
 {
 	if(!m_reserved) return false;
 	return SetCursorPos(m_position.x + pointer_position.x, m_position.y + pointer_position.y) != FALSE;
@@ -523,9 +524,9 @@ bool View::swap() const
 ///////////
 /// Events
 
-bool View::onCreate()
+bool View::onCreate(bool recreating)
 {
-	return true;
+	return this->isValid();
 }
 
 void View::onDestroy(bool recreating)
@@ -590,8 +591,6 @@ LRESULT CALLBACK MWindowProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lpar
 	}
 	switch (message)
 	{
-		case WM_PAINT:
-			return 0;
 		case WM_SYSKEYDOWN:
 		case WM_SYSKEYUP:
 		case WM_KEYDOWN:
@@ -646,7 +645,9 @@ LRESULT CALLBACK MWindowProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lpar
 				SHORT x, y;
 				x = (SHORT)LOWORD(lparam);
 				y = (SHORT)HIWORD(lparam);
-				view->onPointerMove(View::PI_TOUCH + index, x, y);
+				POINT point = {x, y};
+				ScreenToClient(hwnd, &point);
+				view->onPointerMove(View::PI_TOUCH + index, point.x, point.y);
 			}
 			break;
 		case WM_POINTERDOWN:
@@ -674,7 +675,9 @@ LRESULT CALLBACK MWindowProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lpar
 				SHORT x, y;
 				x = (SHORT)LOWORD(lparam);
 				y = (SHORT)HIWORD(lparam);
-				view->onPointer(View::PI_TOUCH + index, x, y, true);
+				POINT point = {x, y};
+				ScreenToClient(hwnd, &point);
+				view->onPointer(View::PI_TOUCH + index, point.x, point.y, true);
 			}
 			break;
 		case WM_POINTERUP:
@@ -694,7 +697,9 @@ LRESULT CALLBACK MWindowProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lpar
 				SHORT x, y;
 				x = (SHORT)LOWORD(lparam);
 				y = (SHORT)HIWORD(lparam);
-				view->onPointer(View::PI_TOUCH + index, x, y, false);
+				POINT point = {x, y};
+				ScreenToClient(hwnd, &point);
+				view->onPointer(View::PI_TOUCH + index, point.x, point.y, false);
 			}
 			break;
 		case WM_LBUTTONDOWN:
@@ -773,7 +778,7 @@ LRESULT CALLBACK MWindowProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lpar
 			}
 			if(view)
 			{
-				if(!view->onCreate()) DestroyWindow(hwnd);
+				if(!view->onCreate(((ViewData*)view->getReserved())->is_recreating)) DestroyWindow(hwnd);
 			}
 			break;
 		case WM_DESTROY:
