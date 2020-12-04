@@ -192,9 +192,9 @@ bool View::create(bool recreate, const Config* configs_, int configs_count_, Fla
 						case View::Config::PT_COLORINDEX: pixel_type = axl::glw::wglext::WGL_TYPE_COLORINDEX_ARB; break;
 					}
 					int attribs[] = {
-						axl::glw::wglext::WGL_DRAW_TO_WINDOW_ARB, axl::glw::gl::GL_TRUE,
-						axl::glw::wglext::WGL_SUPPORT_OPENGL_ARB, axl::glw::gl::GL_TRUE,
-						axl::glw::wglext::WGL_STEREO_ARB, !config->stereo ? axl::glw::gl::GL_FALSE : axl::glw::gl::GL_TRUE,
+						axl::glw::wglext::WGL_DRAW_TO_WINDOW_ARB, (int)axl::glw::gl::GL_TRUE,
+						axl::glw::wglext::WGL_SUPPORT_OPENGL_ARB, (int)axl::glw::gl::GL_TRUE,
+						axl::glw::wglext::WGL_STEREO_ARB, (int)(!config->stereo ? axl::glw::gl::GL_FALSE : axl::glw::gl::GL_TRUE),
 						axl::glw::wglext::WGL_ACCELERATION_ARB, (int)axl::glw::wglext::WGL_FULL_ACCELERATION_ARB,
 						axl::glw::wglext::WGL_PIXEL_TYPE_ARB, pixel_type,
 						axl::glw::wglext::WGL_COLOR_BITS_ARB, config->bits_color,
@@ -209,8 +209,8 @@ bool View::create(bool recreate, const Config* configs_, int configs_count_, Fla
 						axl::glw::wglext::WGL_ACCUM_GREEN_BITS_ARB, config->bits_green_accum,
 						axl::glw::wglext::WGL_ACCUM_BLUE_BITS_ARB, config->bits_blue_accum,
 						axl::glw::wglext::WGL_ACCUM_ALPHA_BITS_ARB, config->bits_alpha_accum,
-						axl::glw::wglext::WGL_DOUBLE_BUFFER_ARB, !config->double_buffered ? axl::glw::gl::GL_FALSE : axl::glw::gl::GL_TRUE,
-						axl::glw::wglext::WGL_SAMPLE_BUFFERS_ARB, config->samples > 0 ? axl::glw::gl::GL_TRUE : axl::glw::gl::GL_FALSE,
+						axl::glw::wglext::WGL_DOUBLE_BUFFER_ARB, (int)(!config->double_buffered ? axl::glw::gl::GL_FALSE : axl::glw::gl::GL_TRUE),
+						axl::glw::wglext::WGL_SAMPLE_BUFFERS_ARB, (int)(config->samples > 0 ? axl::glw::gl::GL_TRUE : axl::glw::gl::GL_FALSE),
 						axl::glw::wglext::WGL_SAMPLES_ARB, config->samples,
 						0
 					};
@@ -242,7 +242,7 @@ bool View::create(bool recreate, const Config* configs_, int configs_count_, Fla
 					pfd.nSize = sizeof(PIXELFORMATDESCRIPTOR);
 					pfd.nVersion = 1;
 					pfd.dwFlags = PFD_SUPPORT_OPENGL|PFD_DRAW_TO_WINDOW|(!config->double_buffered?0:PFD_DOUBLEBUFFER)|(!config->stereo?0:PFD_STEREO);
-					pfd.iPixelType = `pixel_type;
+					pfd.iPixelType = pixel_type;
 					pfd.cColorBits = config->bits_color;
 					pfd.cRedBits = config->bits_red;
 					pfd.cGreenBits = config->bits_green;
