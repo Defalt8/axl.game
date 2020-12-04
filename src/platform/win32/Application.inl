@@ -138,7 +138,7 @@ bool Application::setCursorPosition(const Vec2i& cur_pos)
 
 bool Application::isKeyDown(KeyCode key_code)
 {
-	return GetAsyncKeyState(MapKeyCode(key_code));
+	return 0 != GetAsyncKeyState(MapKeyCode(key_code));
 }
 
 void Application::quit(int exit_code)

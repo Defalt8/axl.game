@@ -154,10 +154,6 @@ bool Context::clearCurrent() const
 //////////////////
 // Context::Config
 
-Context::Config::Config() :
-	Config(Context::Config::Default)
-{}
-
 Context::Config::Config(long id_, int version_major_, int version_minor_, GLProfile profile_) :
 	id(id_),
 	major_version(version_major_),

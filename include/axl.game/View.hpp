@@ -35,9 +35,8 @@ class AXLGAMECXXAPI View
 			public:
 				enum PixelType { PT_RGB, PT_RGBA, PT_RGBA_FLOAT, PT_COLORINDEX };
 			public:
-				Config();
 				Config(long id, PixelType pixel_type, char bits_color, char bits_red, char bits_green, char bits_blue, char bits_alpha, char bits_depth, char bits_stencil, char bits_accum, char bits_red_accum, char bits_green_accum, char bits_blue_accum, char bits_alpha_accum, char samples, bool double_buffered, bool stereo);
-				Config(const Config& config);
+				Config(const Config& config = Default);
 				bool operator==(const Config& config) const;
 				bool operator!=(const Config& config) const;
 			public:
@@ -121,7 +120,7 @@ class AXLGAMECXXAPI View
 	private:
 		View(const View& view);
 		View& operator=(const View& view);
-		friend class AXLGAMECXXAPI axl::game::Context;
+		friend AXLGAMECXXAPI class axl::game::Context;
 }; // class View
 
 } // namespace axl.game

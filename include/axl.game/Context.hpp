@@ -18,9 +18,8 @@ class AXLGAMECXXAPI Context
 				// OpenGL context profiles.
 				enum GLProfile { GLP_COMPATIBLITY, GLP_CORE };
 			public:
-				Config();
 				Config(long id, int major_version, int minor_version, GLProfile profile);
-				Config(const Config& config);
+				Config(const Config& config = Default);
 				bool operator==(const Config& config) const;
 				bool operator!=(const Config& config) const;
 			public:

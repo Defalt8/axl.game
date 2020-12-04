@@ -42,7 +42,6 @@ View::View(const axl::util::WString& title_, const axl::math::Vec2i& position_, 
 	m_cursor(cursor_),
 	m_visiblity(View::VS_HIDDEN),
 	m_is_paused(false),
-	m_pointers(),
 	m_reserved((void*)calloc(1, sizeof(ViewData)))
 {
 	for(int i=0; i<MAX_POINTERS; ++i) m_pointers[i] = false;
@@ -797,10 +796,6 @@ View::Cursor View::DefaultCursor = View::CUR_ARROW;
 
 //////////////////
 // View::Config
-
-View::Config::Config() :
-	Config(View::Config::Default)
-{}
 
 View::Config::Config(long id_, PixelType pixel_type_, 
 		char bits_color_, char bits_red_, char bits_green_, char bits_blue_, char bits_alpha_, 
