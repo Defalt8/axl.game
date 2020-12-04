@@ -2,6 +2,7 @@
 #include <windows.h>
 #include <axl.game/Application.hpp>
 #include <axl.game/KeyMap.hpp>
+#include <defs.h>
 
 namespace axl {
 namespace game {
