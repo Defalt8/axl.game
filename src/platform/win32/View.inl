@@ -241,8 +241,8 @@ bool View::create(bool recreate, const Config* configs_, int configs_count_, Fla
 					ZeroMemory(&pfd, sizeof(PIXELFORMATDESCRIPTOR));
 					pfd.nSize = sizeof(PIXELFORMATDESCRIPTOR);
 					pfd.nVersion = 1;
-					pfd.dwFlags = PFD_SUPPORT_OPENGL|PFD_DRAW_TO_WINDOW|PFD_SUPPORT_COMPOSITION|(!config->double_buffered?0:PFD_DOUBLEBUFFER)|(!config->stereo?0:PFD_STEREO);
-					pfd.iPixelType = pixel_type;
+					pfd.dwFlags = PFD_SUPPORT_OPENGL|PFD_DRAW_TO_WINDOW|(!config->double_buffered?0:PFD_DOUBLEBUFFER)|(!config->stereo?0:PFD_STEREO);
+					pfd.iPixelType = `pixel_type;
 					pfd.cColorBits = config->bits_color;
 					pfd.cRedBits = config->bits_red;
 					pfd.cGreenBits = config->bits_green;
