@@ -30,8 +30,11 @@ A simple multiplatform C++ and OpenGL based game library.
 
 ## How to get started
 
-- Clone this repo into a directory and execute these commands to build the library.
+- Clone these repos into a directory and execute these commands to build the library.
   - git clone https://github.com/defalt8/axl.game.git
+  - git clone https://github.com/defalt8/axl.glw.git
+  - git clone https://github.com/defalt8/axl.math.git
+  - git clone https://github.com/defalt8/axl.util.git
   - cd axl.game
   - mkdir out\\build
   - cd out\\build
