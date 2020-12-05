@@ -571,6 +571,7 @@ compile_commands.json
 *.user
 *.userosscache
 *.sln.docstates
+CMakeSettings.json
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
