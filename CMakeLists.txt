@@ -1,6 +1,6 @@
 cmake_minimum_required( VERSION 3.17 )
 
-project( axl.game VERSION 0.9.31 DESCRIPTION "A simple C++ OpenGL graphics library." )
+project( axl.game VERSION 0.10.35 DESCRIPTION "A simple C++ OpenGL based multiplatform game library." )
 
 # Configure
 set( LIBAXLGAME_SUFFIX "" )
@@ -76,10 +76,12 @@ if( INSTALL_HEADERS AND LIBAXLGAME_INSTALL_HEADERS )
 	install( FILES
 		"include/axl.game/lib.hpp"
 		"include/axl.game/Application.hpp"
-		"include/axl.game/KeyCodes.hpp"
-		"include/axl.game/KeyMap.hpp"
 		"include/axl.game/View.hpp"
 		"include/axl.game/Context.hpp"
+		"include/axl.game/input/KeyCodes.hpp"
+		"include/axl.game/input/Keyboard.hpp"
+		"include/axl.game/input/Mouse.hpp"
+		"include/axl.game/input/Touch.hpp"
 		DESTINATION "${HEADERS_INSTALL_DIR}/axl.game"
 	)
 endif()

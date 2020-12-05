@@ -3,9 +3,11 @@ set( LIBAXLGAME_OUTPUT_NAME axl.game )
 add_library( axl.game ${LIBAXLGAME_TYPE}
 	"lib.cpp"
 	"Application.cpp"
-	"KeyMap.cpp"
 	"View.cpp"
 	"Context.cpp"
+	"input/Keyboard.cpp"
+	"input/Mouse.cpp"
+	"input/Touch.cpp"
 )
 target_compile_definitions( axl.game
 	PRIVATE LIBAXLGAME_BUILD

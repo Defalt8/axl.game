@@ -4,7 +4,7 @@ A simple multiplatform C++ and OpenGL based game library.
 
 ## Versions and supported platforms
 
-- Latest version: 0.9.31 alpha
+- Latest version: 0.10.35 alpha
 - Currently supported platforms: **Windows**
 
 ## Library Headers

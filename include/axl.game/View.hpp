@@ -2,7 +2,7 @@
 #include <axl.math/vec/Vec2i.hpp>
 #include <axl.util/WString.hpp>
 #include "lib.hpp"
-#include "KeyCodes.hpp"
+#include "input/KeyCodes.hpp"
 #include "Context.hpp"
 
 namespace axl {
@@ -16,11 +16,11 @@ class AXLGAMECXXAPI View
 {
 	public:
 		const static int MAX_TOUCHES = 10;
-		const static int MAX_POINTERS = MAX_TOUCHES + 2; // don't change
+		const static int MAX_POINTERS = MAX_TOUCHES + 3; // don't change
 		// View creation flags
 		enum Flags { VF_FIXED, VF_RESIZABLE, VF_POPUP };
 		// A mouse or other pointer's buttons.
-		enum PointerIndex { PI_RIGHT_BUTTON = 0, PI_MIDDLE_BUTTON = 1, PI_LEFT_BUTTON = 2, PI_TOUCH = 2 };
+		enum PointerIndex { PI_RIGHT_BUTTON = 0, PI_MIDDLE_BUTTON = 1, PI_LEFT_BUTTON = 2, PI_TOUCH = 3 };
 		// View visiblity states.
 		enum VisiblityState { VS_SHOWN, VS_HIDDEN, VS_FULLSCREEN };
 		// View show modes.
@@ -91,10 +91,11 @@ class AXLGAMECXXAPI View
 		virtual void onSize(int w, int h);
 		virtual void onPause();
 		virtual void onResume();
-		virtual void onKey(KeyCode key_code, bool is_down);
+		virtual void onKey(input::KeyCode key_code, bool is_down);
 		virtual void onChar(char char_code);
 		virtual void onPointer(int index, int x, int y, bool is_down);
 		virtual void onPointerMove(int index, int x, int y);
+		virtual void onScroll(bool is_vertical, int delta, int x, int y);
 	public:
 		const axl::math::Vec2i& position;
 		const axl::math::Vec2i& size;

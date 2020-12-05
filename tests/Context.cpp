@@ -137,7 +137,7 @@ int main(int argc, char *argv[])
 				glVertex2d( 0.5,-0.5);
 				glVertex2d( 0.0, 0.5);
 			glEnd();
-			float blur_factor = 0.875f;
+			float blur_factor = 0.7f;
 			glAccum(GL_MULT, blur_factor);
 			glAccum(GL_ACCUM, 1.0f - blur_factor);
 			glAccum(GL_RETURN, 1.0f);

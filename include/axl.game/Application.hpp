@@ -1,7 +1,6 @@
 #pragma once
-#include <axl.math/vec/Vec2i.hpp>
 #include "lib.hpp"
-#include "KeyCodes.hpp"
+#include <axl.math/vec/Vec2i.hpp>
 
 namespace axl {
 namespace game {
@@ -32,9 +31,6 @@ class AXLGAMECXXAPI Application
 		static bool setDisplaySettings(const DisplaySetting& display_setting, bool test = false);
 		// Restores the default display settings
 		static bool restoreDisplaySettings();
-		static bool setCursorPosition(int x, int y);
-		static bool setCursorPosition(const axl::math::Vec2i& cur_pos);
-		static bool isKeyDown(KeyCode key_code);
 		static void quit(int exit_code);
 		static bool pollEvent();
 		static void pollEvents();

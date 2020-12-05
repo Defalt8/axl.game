@@ -23,11 +23,6 @@ int main(int argc, char *argv[])
 	Assertv(display_size.x == GetSystemMetrics(SM_CXSCREEN), verbose);
 	Assertv(display_size.y == GetSystemMetrics(SM_CYSCREEN), verbose);
 	Assertv(Application::IsQuitting == false, verbose);
-	pointer_position = Application::getCursorPosition();
-	printf("pointer_position: (%dx%d)\n", pointer_position.x, pointer_position.y);
-	Application::setCursorPosition(display_size.x/2,display_size.y/2);
-	pointer_position = Application::getCursorPosition();
-	printf("pointer_position: (%dx%d)\n", pointer_position.x, pointer_position.y);
 	Assertv(pointer_position.x == display_size.x/2, verbose);
 	Assertv(pointer_position.y == display_size.y/2, verbose);
 	Application::pollEvent();

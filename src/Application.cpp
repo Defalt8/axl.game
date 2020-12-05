@@ -1,6 +1,7 @@
-#include <axl.glw/platform.h>
+#include <axl.game/platform.h>
+
 #if PLATFORM==PLATFORM_WINDOWS
-#include "platform/win32/Application.inl"
+#	include "platform/win32/Application.cxx"
 #else
-#error "Unsupported platform"
+#	error "Unsupported platform"
 #endif

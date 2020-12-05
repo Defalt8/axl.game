@@ -1,16 +1,12 @@
 #pragma once
+#include "../lib.hpp"
 
 namespace axl {
 namespace game {
+namespace input {
 
-enum KeyCode
-{
+enum KeyCode {
 	KEY_UNKNOWN = -1,
-	KEY_LBUTTON = 0,
-	KEY_RBUTTON,
-	KEY_MBUTTON,
-	KEY_XBUTTON1,
-	KEY_XBUTTON2,
 	KEY_CANCEL,
 	KEY_BACK,
 	KEY_TAB,
@@ -92,7 +88,6 @@ enum KeyCode
 	KEY_NUMPAD7,
 	KEY_NUMPAD8,
 	KEY_NUMPAD9,
-
 	KEY_MULTIPLY,
 	KEY_ADD,
 	KEY_SEPARATOR,
@@ -150,7 +145,8 @@ enum KeyCode
 	KEY_QUOTE,
 	KEY_COMMA,
 	KEY_PERIOD
-}; // enum KeyCodes
+}; // enum KeyCode
 
+} // namespace axl.game.input
 } // namespace axl.game
 } // namespace axl
