@@ -67,7 +67,7 @@ class AXLGAMECXXAPI View
 	public:
 		View(const axl::util::WString& title, const axl::math::Vec2i& position, const axl::math::Vec2i& size, const Cursor& cursor = View::DefaultCursor);
 		virtual ~View();
-		virtual bool isValid() const;
+		bool isValid() const;
 		virtual bool create(bool recreate = false, const Config* configs = (const Config*)0, int configs_count = 0, Flags flags = VF_FIXED);
 		virtual void destroy();
 		const void* getReserved() const;

@@ -43,6 +43,8 @@ class AXLGAMECXXAPI Context
 		virtual void destroy();
 		virtual bool makeCurrent() const;
 		virtual bool clearCurrent() const;
+		bool getVSync() const;
+		bool setVSync(bool v_sync) const;
 	public:
 		const View*const& view;
 		const Context::Config& config;
